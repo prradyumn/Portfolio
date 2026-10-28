@@ -2,1489 +2,518 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pradyumn Awasthi — Product Designer</title>
-<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Oswald:wght@300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --spidey-red: #CC0000;
-    --spidey-blue: #1A1AFF;
-    --deadpool-red: #E00000;
-    --deadpool-black: #0a0a0a;
-    --bat-gold: #FFD700;
-    --bat-dark: #0D0D0D;
-    --bat-gray: #1C1C2E;
-    --white: #FFFFFF;
-    --cream: #F5F0E8;
-    --text-bright: #F0EEE8;
-    --text-mid: #C8C4BC;
-    --text-dim: #9A968E;
-    --panel-border: 4px solid #000;
-    --ink-shadow: 6px 6px 0px #000;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bat-dark);
-    font-family: 'Roboto Condensed', sans-serif;
-    cursor: none;
-    overflow-x: hidden;
-  }
-
-  /* ===== SPIDER CURSOR ===== */
-  #cursor-web {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    pointer-events: none;
-    z-index: 99997;
-  }
-
-  #cursor-mask {
-    position: fixed;
-    width: 48px; height: 48px;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 100000;
-    transition: transform 0.15s ease;
-  }
-
-  #cursor-mask svg {
-    width: 100%; height: 100%;
-    filter: drop-shadow(0 0 6px rgba(204,0,0,0.8)) drop-shadow(2px 2px 0 #000);
-  }
-
-  #cursor-mask.clicked svg {
-    animation: mask-pulse 0.35s ease-out forwards;
-  }
-
-  @keyframes mask-pulse {
-    0%   { transform: scale(1); opacity: 1; }
-    50%  { transform: scale(1.5); opacity: 0.6; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
-  .web-burst-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    pointer-events: none;
-    z-index: 99998;
-  }
-
-  /* ===== COMIC HALFTONE BG ===== */
-  .halftone-bg {
-    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
-    background-size: 20px 20px;
-  }
-
-  /* ===== NAVIGATION ===== */
-  nav {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    background: linear-gradient(90deg, var(--deadpool-black) 0%, var(--bat-gray) 50%, var(--deadpool-black) 100%);
-    border-bottom: 4px solid var(--bat-gold);
-    padding: 0.8rem 3rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .nav-logo {
-    font-family: 'Bangers', cursive;
-    font-size: 2rem;
-    color: var(--bat-gold);
-    letter-spacing: 3px;
-    text-shadow: 3px 3px 0 var(--spidey-red), 6px 6px 0 #000;
-  }
-
-  .nav-links a {
-    font-family: 'Oswald', sans-serif;
-    color: var(--white);
-    text-decoration: none;
-    margin-left: 2rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: color 0.2s, text-shadow 0.2s;
-  }
-
-  .nav-links a:hover {
-    color: var(--bat-gold);
-    text-shadow: 0 0 12px var(--bat-gold);
-  }
-
-  /* ===== HERO ===== */
-  #hero {
-    min-height: 100vh;
-    background: var(--bat-dark);
-    display: flex;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    padding-top: 80px;
-  }
-
-  .hero-bg-panels {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    opacity: 0.07;
-  }
-
-  .hero-bg-panels div:nth-child(odd) { background: var(--spidey-red); }
-  .hero-bg-panels div:nth-child(even) { background: var(--spidey-blue); }
-
-  /* Spider web SVG lines */
-  .web-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.15;
-  }
-
-  .hero-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 3rem;
-    position: relative;
-    z-index: 2;
-    align-items: center;
-  }
-
-  .hero-text { }
-
-  .hero-badge {
-    display: inline-block;
-    background: var(--spidey-red);
-    color: var(--white);
-    font-family: 'Bangers', cursive;
-    font-size: 1rem;
-    letter-spacing: 3px;
-    padding: 0.3rem 1rem;
-    border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
-    margin-bottom: 1.5rem;
-    transform: rotate(-2deg);
-    animation: badge-pop 2s ease-in-out infinite;
-  }
-
-  @keyframes badge-pop {
-    0%, 100% { transform: rotate(-2deg) scale(1); }
-    50% { transform: rotate(-2deg) scale(1.05); }
-  }
-
-  .hero-name {
-    font-family: 'Bangers', cursive;
-    font-size: clamp(3.5rem, 8vw, 7rem);
-    line-height: 0.9;
-    color: var(--white);
-    text-transform: uppercase;
-    letter-spacing: 4px;
-  }
-
-  .hero-name .highlight-red {
-    color: var(--spidey-red);
-    text-shadow: 4px 4px 0 #000;
-    display: block;
-  }
-
-  .hero-name .highlight-gold {
-    color: var(--bat-gold);
-    text-shadow: 4px 4px 0 #000;
-    display: block;
-  }
-
-  .hero-title {
-    font-family: 'Oswald', sans-serif;
-    font-size: 1.5rem;
-    color: var(--text-bright);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    margin: 1.8rem 0 1.2rem;
-    padding-left: 2px;
-  }
-
-  .hero-title span {
-    color: var(--bat-gold);
-  }
-
-  .hero-description {
-    font-size: 1.1rem;
-    color: var(--text-mid);
-    line-height: 1.9;
-    margin-bottom: 2.8rem;
-    max-width: 500px;
-  }
-
-  .hero-cta {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .btn-primary {
-    font-family: 'Bangers', cursive;
-    font-size: 1.3rem;
-    letter-spacing: 3px;
-    background: var(--spidey-red);
-    color: var(--white);
-    padding: 0.8rem 2rem;
-    border: 3px solid #000;
-    box-shadow: var(--ink-shadow);
-    text-decoration: none;
-    transition: transform 0.1s, box-shadow 0.1s;
-    display: inline-block;
-    cursor: none;
-  }
-
-  .btn-primary:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 9px 9px 0px #000;
-    color: var(--bat-gold);
-  }
-
-  .btn-secondary {
-    font-family: 'Bangers', cursive;
-    font-size: 1.3rem;
-    letter-spacing: 3px;
-    background: transparent;
-    color: var(--bat-gold);
-    padding: 0.8rem 2rem;
-    border: 3px solid var(--bat-gold);
-    box-shadow: 6px 6px 0 var(--bat-gold);
-    text-decoration: none;
-    transition: transform 0.1s, box-shadow 0.1s;
-    display: inline-block;
-    cursor: none;
-  }
-
-  .btn-secondary:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 9px 9px 0 var(--bat-gold);
-    background: var(--bat-gold);
-    color: #000;
-  }
-
-  /* Photo Panel */
-  .hero-photo-panel {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .photo-comic-frame {
-    position: relative;
-    width: 380px;
-    height: 480px;
-  }
-
-  .photo-border-outer {
-    position: absolute;
-    inset: 0;
-    border: 6px solid #000;
-    box-shadow: 12px 12px 0 var(--spidey-red), 18px 18px 0 #000;
-    background: var(--bat-gold);
-    z-index: 0;
-  }
-
-  .photo-border-inner {
-    position: absolute;
-    inset: 10px;
-    border: 4px solid #000;
-    overflow: hidden;
-    z-index: 1;
-    background: #111;
-  }
-
-  .photo-border-inner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    filter: contrast(1.1) saturate(0.9);
-    display: block;
-  }
-
-  .photo-caption {
-    position: absolute;
-    bottom: -20px;
-    left: 10px;
-    right: 10px;
-    background: var(--deadpool-black);
-    color: var(--bat-gold);
-    font-family: 'Bangers', cursive;
-    font-size: 1rem;
-    letter-spacing: 3px;
-    text-align: center;
-    padding: 0.5rem;
-    border: 3px solid #000;
-    z-index: 3;
-  }
-
-  .hero-decorations {
-    position: absolute;
-    pointer-events: none;
-  }
-
-  .action-word {
-    font-family: 'Bangers', cursive;
-    position: absolute;
-    color: var(--bat-gold);
-    border: 4px solid #000;
-    padding: 0.5rem 1rem;
-    background: var(--spidey-blue);
-    box-shadow: 4px 4px 0 #000;
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-    z-index: 10;
-    animation: wobble 3s ease-in-out infinite;
-  }
-
-  @keyframes wobble {
-    0%, 100% { transform: rotate(-3deg); }
-    50% { transform: rotate(3deg); }
-  }
-
-  /* ===== SECTION HEADERS ===== */
-  .section-header {
-    text-align: center;
-    padding: 5rem 2rem 3rem;
-    position: relative;
-  }
-
-  .section-tag {
-    display: inline-block;
-    font-family: 'Bangers', cursive;
-    font-size: 0.9rem;
-    letter-spacing: 4px;
-    color: #000;
-    background: var(--bat-gold);
-    padding: 0.3rem 1.2rem;
-    border: 3px solid #000;
-    box-shadow: 3px 3px 0 #000;
-    margin-bottom: 1rem;
-  }
-
-  .section-title {
-    font-family: 'Bangers', cursive;
-    font-size: clamp(2.8rem, 5vw, 5rem);
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    line-height: 1;
-  }
-
-  /* ===== ABOUT SECTION ===== */
-  #about {
-    background: var(--bat-gray);
-    padding: 6rem 2rem;
-    border-top: 6px solid #000;
-    border-bottom: 6px solid #000;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 4rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    align-items: center;
-  }
-
-  .about-card {
-    background: var(--deadpool-black);
-    border: 4px solid var(--bat-gold);
-    box-shadow: 8px 8px 0 var(--bat-gold);
-    padding: 2rem;
-    position: relative;
-  }
-
-  .about-card::before {
-    content: '';
-    position: absolute;
-    top: -3px; left: -3px; right: -3px; bottom: -3px;
-    border: 2px solid #000;
-    pointer-events: none;
-  }
-
-  .about-hero-tag {
-    font-family: 'Bangers', cursive;
-    font-size: 2.5rem;
-    color: var(--spidey-red);
-    text-shadow: 3px 3px 0 #000;
-    display: block;
-    margin-bottom: 1rem;
-    letter-spacing: 3px;
-  }
-
-  .about-stat {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    margin: 0.6rem 0;
-  }
-
-  .about-stat-num {
-    font-family: 'Bangers', cursive;
-    font-size: 2.5rem;
-    color: var(--bat-gold);
-    text-shadow: 2px 2px 0 #000;
-  }
-
-  .about-stat-label {
-    font-family: 'Oswald', sans-serif;
-    color: var(--text-mid);
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .about-text h3 {
-    font-family: 'Bangers', cursive;
-    font-size: 2.2rem;
-    color: var(--white);
-    letter-spacing: 3px;
-    margin-bottom: 1.2rem;
-  }
-
-  .about-text h3 span { color: var(--spidey-red); }
-
-  .about-text p {
-    color: var(--text-mid);
-    line-height: 1.9;
-    font-size: 1.1rem;
-    margin-bottom: 1.8rem;
-  }
-
-  .origin-panel {
-    background: linear-gradient(135deg, #1a0000 0%, #0d0d1a 100%);
-    border: 3px solid var(--spidey-red);
-    padding: 1.8rem;
-    box-shadow: 6px 6px 0 #000;
-    position: relative;
-  }
-
-  .origin-panel::before {
-    content: '★ ORIGIN STORY ★';
-    position: absolute;
-    top: -14px;
-    left: 20px;
-    background: var(--spidey-red);
-    color: #fff;
-    font-family: 'Bangers', cursive;
-    font-size: 0.85rem;
-    letter-spacing: 3px;
-    padding: 2px 10px;
-    border: 2px solid #000;
-  }
-
-  .origin-panel p {
-    color: var(--text-bright);
-    font-style: italic;
-    line-height: 1.85;
-    font-size: 1.05rem;
-  }
-
-  /* ===== SKILLS SECTION ===== */
-  #skills {
-    background: var(--bat-dark);
-    padding: 6rem 2rem;
-    halftone-bg: true;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .skills-container {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-
-  .skill-card {
-    background: var(--bat-gray);
-    border: 4px solid #000;
-    position: relative;
-    padding: 1.5rem;
-    transition: transform 0.2s, box-shadow 0.2s;
-    overflow: hidden;
-    cursor: none;
-  }
-
-  .skill-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 5px;
-    background: var(--skill-color, var(--spidey-red));
-  }
-
-  .skill-card:hover {
-    transform: translate(-4px, -4px);
-    box-shadow: 8px 8px 0 var(--skill-color, var(--spidey-red));
-  }
-
-  .skill-card .skill-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.8rem;
-    display: block;
-    filter: drop-shadow(2px 2px 0 #000);
-  }
-
-  .skill-card h4 {
-    font-family: 'Bangers', cursive;
-    font-size: 1.5rem;
-    color: var(--white);
-    letter-spacing: 2px;
-    margin-bottom: 0.5rem;
-  }
-
-  .skill-card p {
-    font-size: 0.95rem;
-    color: var(--text-mid);
-    line-height: 1.6;
-  }
-
-  .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 1rem;
-  }
-
-  .skill-tag {
-    font-family: 'Oswald', sans-serif;
-    font-size: 0.7rem;
-    background: #000;
-    color: var(--skill-color, var(--bat-gold));
-    padding: 2px 8px;
-    border: 1px solid var(--skill-color, var(--bat-gold));
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  /* ===== EXPERIENCE SECTION ===== */
-  #experience {
-    background: #0f0f1a;
-    padding: 6rem 2rem;
-    border-top: 6px solid #000;
-    border-bottom: 6px solid #000;
-  }
-
-  .timeline {
-    max-width: 900px;
-    margin: 3rem auto 0;
-    position: relative;
-    padding-left: 3rem;
-  }
-
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 5px;
-    background: linear-gradient(180deg, var(--spidey-red), var(--spidey-blue), var(--bat-gold));
-  }
-
-  .timeline-item {
-    position: relative;
-    margin-bottom: 3rem;
-    background: var(--bat-gray);
-    border: 4px solid #000;
-    box-shadow: 8px 8px 0 #000;
-    padding: 2rem;
-    transition: transform 0.2s;
-  }
-
-  .timeline-item:hover {
-    transform: translate(-4px, -4px);
-    box-shadow: 12px 12px 0 #000;
-  }
-
-  .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -3.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background: var(--bat-gold);
-    border: 4px solid #000;
-    border-radius: 50%;
-    box-shadow: 3px 3px 0 #000;
-  }
-
-  .timeline-date {
-    font-family: 'Bangers', cursive;
-    font-size: 0.9rem;
-    color: var(--bat-gold);
-    letter-spacing: 3px;
-    background: #000;
-    display: inline-block;
-    padding: 2px 10px;
-    margin-bottom: 0.5rem;
-  }
-
-  .timeline-company {
-    font-family: 'Bangers', cursive;
-    font-size: 2rem;
-    color: var(--spidey-red);
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 0 #000;
-  }
-
-  .timeline-role {
-    font-family: 'Oswald', sans-serif;
-    font-size: 1.05rem;
-    color: var(--text-bright);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 1.2rem;
-  }
-
-  .timeline-item ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .timeline-item ul li {
-    color: var(--text-mid);
-    font-size: 1rem;
-    padding: 0.4rem 0 0.4rem 1.8rem;
-    position: relative;
-    line-height: 1.6;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-
-  .timeline-item ul li:last-child { border-bottom: none; }
-
-  .timeline-item ul li::before {
-    content: '▶';
-    position: absolute;
-    left: 0;
-    color: var(--bat-gold);
-    font-size: 0.65rem;
-    top: 0.6rem;
-  }
-
-  /* ===== PROJECTS ===== */
-  #projects {
-    background: var(--bat-dark);
-    padding: 6rem 2rem;
-  }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 2rem;
-    max-width: 1100px;
-    margin: 3rem auto 0;
-  }
-
-  .project-card {
-    background: var(--bat-gray);
-    border: 5px solid #000;
-    box-shadow: 10px 10px 0 #000;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: none;
-  }
-
-  .project-card:hover {
-    transform: translate(-5px, -5px);
-    box-shadow: 15px 15px 0 #000;
-  }
-
-  .project-card-header {
-    background: linear-gradient(135deg, var(--spidey-red), #880000);
-    padding: 1.5rem 1.5rem 1rem;
-    border-bottom: 4px solid #000;
-    position: relative;
-  }
-
-  .project-card-header::after {
-    content: 'NEW ISSUE!';
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--bat-gold);
-    color: #000;
-    font-family: 'Bangers', cursive;
-    font-size: 0.8rem;
-    letter-spacing: 2px;
-    padding: 2px 8px;
-    border: 2px solid #000;
-    transform: rotate(5deg);
-  }
-
-  .project-emoji {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 0.5rem;
-    filter: drop-shadow(2px 2px 0 #000);
-  }
-
-  .project-name {
-    font-family: 'Bangers', cursive;
-    font-size: 2rem;
-    color: var(--white);
-    letter-spacing: 2px;
-    text-shadow: 3px 3px 0 #000;
-  }
-
-  .project-card-body {
-    padding: 1.5rem;
-  }
-
-  .project-card-body p {
-    color: var(--text-mid);
-    font-size: 1rem;
-    line-height: 1.7;
-    margin-bottom: 1rem;
-  }
-
-  .project-links {
-    display: flex;
-    gap: 0.8rem;
-    margin-top: 1rem;
-  }
-
-  .project-link {
-    font-family: 'Oswald', sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #000;
-    background: var(--bat-gold);
-    padding: 0.4rem 1rem;
-    border: 2px solid #000;
-    box-shadow: 3px 3px 0 #000;
-    text-decoration: none;
-    transition: transform 0.1s;
-    cursor: none;
-  }
-
-  .project-link:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 #000;
-  }
-
-  /* ===== CERTIFICATIONS ===== */
-  #certs {
-    background: var(--bat-gray);
-    padding: 6rem 2rem;
-    border-top: 6px solid #000;
-  }
-
-  .certs-grid {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 900px;
-    margin: 3rem auto 0;
-  }
-
-  .cert-card {
-    background: linear-gradient(135deg, #1a0a00, #0a001a);
-    border: 4px solid var(--bat-gold);
-    box-shadow: 6px 6px 0 var(--bat-gold);
-    padding: 2rem;
-    width: 280px;
-    text-align: center;
-    position: relative;
-    transition: transform 0.2s;
-    cursor: none;
-  }
-
-  .cert-card:hover {
-    transform: translate(-4px, -4px);
-  }
-
-  .cert-badge {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 1rem;
-  }
-
-  .cert-name {
-    font-family: 'Bangers', cursive;
-    font-size: 1.3rem;
-    color: var(--bat-gold);
-    letter-spacing: 2px;
-    margin-bottom: 0.3rem;
-  }
-
-  .cert-issuer {
-    font-family: 'Oswald', sans-serif;
-    font-size: 0.8rem;
-    color: #888;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  /* ===== CONTACT ===== */
-  #contact {
-    background: var(--deadpool-black);
-    padding: 6rem 2rem;
-    text-align: center;
-    border-top: 6px solid var(--spidey-red);
-    position: relative;
-    overflow: hidden;
-  }
-
-  #contact::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(circle, rgba(204,0,0,0.05) 1px, transparent 1px);
-    background-size: 30px 30px;
-  }
-
-  .contact-inner {
-    max-width: 700px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  .contact-subtitle {
-    font-family: 'Oswald', sans-serif;
-    font-size: 1.15rem;
-    color: var(--text-mid);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 3rem;
-  }
-
-  .contact-links {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 2rem;
-  }
-
-  .contact-link {
-    font-family: 'Bangers', cursive;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-    color: #000;
-    background: var(--bat-gold);
-    padding: 0.8rem 1.8rem;
-    border: 3px solid #000;
-    box-shadow: 5px 5px 0 #000;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: transform 0.1s;
-    cursor: none;
-  }
-
-  .contact-link:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 8px 8px 0 #000;
-  }
-
-  .contact-link.red {
-    background: var(--spidey-red);
-    color: var(--white);
-    box-shadow: 5px 5px 0 #000;
-  }
-
-  /* ===== FOOTER ===== */
-  footer {
-    background: #000;
-    color: #444;
-    text-align: center;
-    padding: 2rem;
-    font-family: 'Oswald', sans-serif;
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    border-top: 4px solid var(--spidey-blue);
-  }
-
-  footer span { color: var(--spidey-red); }
-
-  /* ===== SCROLL REVEAL ===== */
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ===== COMIC PANEL DECORATIONS ===== */
-  .comic-panel-label {
-    position: absolute;
-    font-family: 'Bangers', cursive;
-    font-size: 0.75rem;
-    letter-spacing: 3px;
-    color: #000;
-    padding: 2px 8px;
-    border: 2px solid #000;
-  }
-
-  /* Action burst behind photo */
-  .action-burst {
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    right: -60px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.04;
-    background: radial-gradient(circle, transparent 30%, var(--spidey-red) 31%, var(--spidey-red) 32%, transparent 33%),
-    repeating-conic-gradient(var(--bat-gold) 0deg 10deg, transparent 10deg 20deg);
-    border-radius: 50%;
-  }
-
-  @media (max-width: 768px) {
-    .hero-content { grid-template-columns: 1fr; text-align: center; }
-    .hero-photo-panel { order: -1; }
-    .photo-comic-frame { width: 280px; height: 360px; }
-    .about-grid { grid-template-columns: 1fr; }
-    nav { padding: 0.8rem 1.5rem; }
-    .nav-links a { margin-left: 1rem; font-size: 0.75rem; }
-    .hero-cta { justify-content: center; }
-  }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pradyumn Awasthi · The Builder</title>
+<meta name="description" content="Pradyumn Awasthi designs learning games, 3D simulations and AI tools, then builds and ships them. AI Design Associate at ConveGenius, Noida.">
+<meta name="theme-color" content="#F1E9D8">
+<meta property="og:title" content="Pradyumn Awasthi · The Builder">
+<meta property="og:description" content="Learning games, 3D simulations and AI tools, designed and shipped. 30 live builds.">
+<meta property="og:image" content="assets/work/varanasi.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23E5371C' stroke='%2316130F' stroke-width='5'/%3E%3Ctext x='32' y='44' font-family='Arial Black,Arial' font-weight='900' font-size='34' text-anchor='middle' fill='%23F1E9D8'%3EP%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Bangers&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
 </head>
-<body class="halftone-bg">
+<body>
+<a class="skip" href="#main">Skip to content</a>
 
-<!-- CURSOR: Spidey Mask -->
-<canvas id="cursor-web"></canvas>
-<canvas class="web-burst-canvas" id="web-burst"></canvas>
-<div id="cursor-mask">
-  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <!-- Spidey mask face shape -->
-    <ellipse cx="50" cy="52" rx="42" ry="46" fill="#CC0000" stroke="#000" stroke-width="3"/>
-    <!-- Web lines radiating from center -->
-    <g stroke="#000" stroke-width="1.5" fill="none" opacity="0.85">
-      <!-- Radial lines -->
-      <line x1="50" y1="6" x2="50" y2="98"/>
-      <line x1="6" y1="52" x2="94" y2="52"/>
-      <line x1="14" y1="16" x2="86" y2="88"/>
-      <line x1="86" y1="16" x2="14" y2="88"/>
-      <line x1="8" y1="35" x2="92" y2="70"/>
-      <line x1="92" y1="35" x2="8" y2="70"/>
-      <line x1="35" y1="7" x2="65" y2="97"/>
-      <line x1="65" y1="7" x2="35" y2="97"/>
-      <!-- Concentric web arcs -->
-      <ellipse cx="50" cy="52" rx="12" ry="13"/>
-      <ellipse cx="50" cy="52" rx="24" ry="26"/>
-      <ellipse cx="50" cy="52" rx="36" ry="39"/>
-    </g>
-    <!-- Eyes - classic spidey white teardrop eyes -->
-    <ellipse cx="35" cy="40" rx="13" ry="9" fill="white" stroke="#000" stroke-width="2" transform="rotate(-15 35 40)"/>
-    <ellipse cx="65" cy="40" rx="13" ry="9" fill="white" stroke="#000" stroke-width="2" transform="rotate(15 65 40)"/>
-    <!-- Eye inner shine -->
-    <ellipse cx="33" cy="38" rx="5" ry="3.5" fill="#e8e8e8" opacity="0.6" transform="rotate(-15 33 38)"/>
-    <ellipse cx="63" cy="38" rx="5" ry="3.5" fill="#e8e8e8" opacity="0.6" transform="rotate(15 63 38)"/>
-  </svg>
+<!-- ================= MASTHEAD ================= -->
+<header class="masthead" id="masthead">
+  <div class="masthead__bar">
+    <a class="logo" href="#top" aria-label="Pradyumn Awasthi, back to top">
+      <span class="logo__mark" aria-hidden="true">P</span>
+      <span>Pradyumn Awasthi <small>/ the builder</small></span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#work">Work</a>
+      <a href="#strip">The strip</a>
+      <a href="#archive">Archive</a>
+      <a href="#log">Log</a>
+      <a href="#origin">Origin</a>
+    </nav>
+    <a class="btn" href="#signal">Say hello <span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top" aria-label="Introduction">
+  <div class="hero__panel">
+    <div class="hero__copy">
+      <div class="hero__top">
+        <span class="caption">Issue #02 · Oct 2026</span>
+        <span class="caption caption--paper hero__status"><span class="pulse" aria-hidden="true"></span>Building at ConveGenius, Noida</span>
+      </div>
+      <h1 class="hero__name display" aria-label="Pradyumn Awasthi">
+        <span class="line" aria-hidden="true">Pradyumn</span>
+        <span class="line" aria-hidden="true">Awasthi</span>
+      </h1>
+      <p class="hero__lede">I design <strong class="hl">learning games, 3D simulations and AI tools</strong>, then I build them and ship them. Most of what you'll see below is live and you can play it.</p>
+      <div class="hero__actions">
+        <a class="btn" href="#work" data-magnetic>See the work <span class="arr" aria-hidden="true">↓</span></a>
+        <a class="link" href="https://github.com/prradyumn" target="_blank" rel="noopener">github.com/prradyumn ↗</a>
+      </div>
+    </div>
+
+    <div class="hero__stage">
+      <div class="hero__sun" aria-hidden="true"></div>
+      <div class="hero__canvas" id="hero3d" role="img" aria-label="Halftone 3D illustrations of a submarine, a phone, a city block, a volcano, a book, a jet and a speech bubble: one for each kind of project I build.">
+        <span class="bubble hero__label" data-hero-label aria-hidden="true"></span>
+      </div>
+      <span class="caption caption--paper hero__hint" aria-hidden="true">Drag to spin · click a thing to open its file</span>
+    </div>
+  </div>
+
+  <!-- proof, straight under the fold -->
+  <div class="proof" aria-label="In numbers">
+    <div class="proof__item">
+      <span class="proof__num" data-count="30">30</span>
+      <span class="proof__label">live builds, every one playable in a browser</span>
+      <span class="proof__src">github.com/prradyumn · Oct 2026</span>
+    </div>
+    <div class="proof__item">
+      <span class="proof__num" data-count="294">294</span>
+      <span class="proof__label">clickable, labelled parts in one 3D repair simulator</span>
+      <span class="proof__src">convegenius-repair-sim</span>
+    </div>
+    <div class="proof__item">
+      <span class="proof__num"><span data-count="3.4" data-dec="1">3.4</span><small> MB</small></span>
+      <span class="proof__label">three.js sim that replaced a 15–40 MB Unity build</span>
+      <span class="proof__src">ChargeSim</span>
+    </div>
+    <div class="proof__item">
+      <span class="proof__num" data-count="1054" data-sep>1,054</span>
+      <span class="proof__label">voice clips in one lesson: every line in English and Hindi</span>
+      <span class="proof__src">Mistri-ji's Workshop</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURED ISSUES ================= -->
+<section class="sec issues" id="work" aria-labelledby="work-h">
+  <div class="wrap">
+    <div class="sec__head">
+      <div class="sec__no">01 · Featured issues</div>
+      <h2 class="h2" id="work-h">Eight things<br>I shipped</h2>
+      <p>Games, simulations and AI tools from 2026. Each cover is printed in a single ink until it reaches the middle of the screen or you hover it. Then it shows in full colour.</p>
+    </div>
+  </div>
+
+  <div class="issues__viewport">
+    <div class="issues__track" id="track">
+
+      <article class="cover cover--wide" id="issue-varanasi">
+        <div class="cover__top"><b>#01</b><span>Game · three.js open world</span></div>
+        <div class="cover__art">
+          <img src="assets/work/varanasi.jpg" alt="Title screen of The Legend of Varanasi: a hero on the ghats at sunset with the river and temples behind." loading="lazy" width="1200" height="750">
+          <span class="sfx cover__sfx" aria-hidden="true">WHOOSH!</span>
+        </div>
+        <div class="cover__body">
+          <h3 class="cover__title">The Legend of Varanasi</h3>
+          <p class="cover__desc">An open-world action-adventure on the ghats of Kashi. Rekindle five sacred flames, swim and dive in the Ganga, race boats on it, and fight the Asuras that rise out of the river after dark.</p>
+          <div class="cover__stats"><span class="chip chip--y">5 story chapters</span><span class="chip">107 moves</span><span class="chip">60 fps on a MacBook Air</span></div>
+          <div class="cover__links"><a class="link" href="https://my-game-project-1-liard.vercel.app" target="_blank" rel="noopener">Play it ↗</a><a class="link" href="https://github.com/prradyumn/my-game-project-1" target="_blank" rel="noopener">Code ↗</a></div>
+        </div>
+      </article>
+
+      <article class="cover" id="issue-sonar" style="--tint:#3FA9D6">
+        <div class="cover__top"><b>#02</b><span>Learning game · Grade 6 maths</span></div>
+        <div class="cover__art">
+          <img src="assets/work/sonar.jpg" alt="Sonar Defence title screen: a coast-guard ship above water, submarines below a glowing number line." loading="lazy" width="1200" height="750">
+          <span class="sfx cover__sfx" aria-hidden="true">PING!</span>
+        </div>
+        <div class="cover__body">
+          <h3 class="cover__title">Sonar Defence</h3>
+          <p class="cover__desc">Integers on a navigation scale, played from inside a submarine cockpit. Three levels take a child from firing opposite missiles to comparing numbers with the number line taken away.</p>
+          <div class="cover__stats"><span class="chip chip--y">3 levels</span><span class="chip">guided replay on a wrong tap</span></div>
+          <div class="cover__links"><a class="link" href="https://sgamefinal.vercel.app" target="_blank" rel="noopener">Play it ↗</a><a class="link" href="https://github.com/prradyumn/Sonar_Defence_Assets" target="_blank" rel="noopener">Code ↗</a></div>
+        </div>
+      </article>
+
+      <article class="cover" id="issue-storyforge" style="--tint:#F7C531">
+        <div class="cover__top"><b>#03</b><span>AI · agentic workflow</span></div>
+        <div class="cover__art">
+          <img src="assets/work/storyforge.jpg" alt="StoryForge interface: source notes on the left, a five-step agent pipeline from intake to Jira on the right." loading="lazy" width="1200" height="750">
+          <span class="sfx cover__sfx" aria-hidden="true">KA-CHUNK!</span>
+        </div>
+        <div class="cover__body">
+          <h3 class="cover__title">StoryForge</h3>
+          <p class="cover__desc">Paste stakeholder notes. Five agents turn them into INVEST-reviewed user stories with Gherkin acceptance criteria and push them to Jira. Every requirement quotes the sentence it came from.</p>
+          <div class="cover__stats"><span class="chip chip--y">5 agents</span><span class="chip">99.5% traceable</span><span class="chip">8-domain eval set</span></div>
+          <div class="cover__links"><a class="link" href="https://storyforge-livid.vercel.app" target="_blank" rel="noopener">Try it ↗</a><a class="link" href="https://github.com/prradyumn/storyforge" target="_blank" rel="noopener">Code ↗</a></div>
+        </div>
+      </article>
+
+      <article class="cover cover--wide" id="issue-delhi" style="--tint:#E5371C">
+        <div class="cover__top"><b>#04</b><span>Digital twin · 3D city</span></div>
+        <div class="cover__art">
+          <img src="assets/work/delhi.jpg" alt="Delhi Pulse Twin: a 3D model of Central Delhi with layer controls on the left and a scenario lab on the right." loading="lazy" width="1200" height="750">
+          <span class="sfx cover__sfx" aria-hidden="true">VROOM!</span>
+        </div>
+        <div class="cover__body">
+          <h3 class="cover__title">Delhi Pulse Twin</h3>
+          <p class="cover__desc">Connaught Place to India Gate, a locked 4 × 4 km box, in the browser. Buildings, metro, bus corridors and a scenario lab, and every layer says whether its numbers are observed, estimated or simulated.</p>
+          <div class="cover__stats"><span class="chip chip--y">3,196 buildings</span><span class="chip">166 transit stops</span><span class="chip">no live API needed</span></div>
+          <div class="cover__links"><a class="link" href="https://delhi-pulse-twin.vercel.app" target="_blank" rel="noopener">Explore it ↗</a><a class="link" href="https://github.com/prradyumn/delhi-pulse-twin" target="_blank" rel="noopener">Code ↗</a></div>
+        </div>
+      </article>
+
+      <article class="cover" id="issue-mig" style="--tint:#3FA9D6">
+        <div class="cover__top"><b>#05</b><span>Flight sim · three.js</span></div>
+        <div class="cover__art">
+          <img src="assets/work/mig29.jpg" alt="MiG-29K Carrier Sim: training lesson list beside a jet on the carrier deck at sea." loading="lazy" width="1200" height="750" style="--pos: 70% center">
+          <span class="sfx cover__sfx" aria-hidden="true">ZOOOM!</span>
+        </div>
+        <div class="cover__body">
+          <h3 class="cover__title">MiG-29K Carrier Sim</h3>
+          <p class="cover__desc">Carrier flight from INS Vikramaditya: cold start, ski-jump launch, the groove and the wire. Fly-by-wire limits, a moving deck, and a landing signal officer who grades every pass.</p>
+          <div class="cover__stats"><span class="chip chip--y">7 training lessons</span><span class="chip">LSO grading</span></div>
+          <div class="cover__links"><a class="link" href="https://mig29.vercel.app" target="_blank" rel="noopener">Fly it ↗</a><a class="link" href="https://github.com/prradyumn/MiG-29K-Carrier-Sim" target="_blank" rel="noopener">Code ↗</a></div>
+        </div>
+      </article>
+
+      <article class="cover" id="issue-repair" style="--tint:#F7C531">
+        <div class="cover__top"><b>#06</b><span>3D teaching sim · vocational</span></div>
+        <div class="cover__art">
+          <img src="assets/work/repair.jpg" alt="Mobile Charging Repair simulator: a charger IC on a circuit board, a parts tree on the left and repair animations on the right." loading="lazy" width="1200" height="750">
+          <span class="sfx cover__sfx" aria-hidden="true">ZAP!</span>
+        </div>
+        <div class="cover__body">
+          <h3 class="cover__title">Mobile Charging Repair</h3>
+          <p class="cover__desc">For a mobile-repair course. Click any part and the camera flies to it, highlights it and explains why it matters. Cross-sections, fault states and repair animations.</p>
+          <div class="cover__stats"><span class="chip chip--y">294 labelled parts</span><span class="chip">6 assets</span><span class="chip">search with /</span></div>
+          <div class="cover__links"><a class="link" href="https://convegenius-repair-sim.vercel.app" target="_blank" rel="noopener">Open it ↗</a><a class="link" href="https://github.com/prradyumn/convegenius-repair-sim" target="_blank" rel="noopener">Code ↗</a></div>
+        </div>
+      </article>
+
+      <article class="cover" id="issue-charge" style="--tint:#E5371C">
+        <div class="cover__top"><b>#07</b><span>3D sim · Unity replacement</span></div>
+        <div class="cover__art">
+          <img src="assets/work/chargesim.jpg" alt="How a Phone Charges: a repair bench with instruments in a navy studio with a glowing grid floor." loading="lazy" width="1200" height="750">
+          <span class="sfx cover__sfx" aria-hidden="true">BZZT!</span>
+        </div>
+        <div class="cover__body">
+          <h3 class="cover__title">How a Phone Charges</h3>
+          <p class="cover__desc">A Unity WebGL training sim rebuilt in three.js, with the whole scene generated by Python. Printed labels are vector text baked at build time, and the studio is one shader instead of geometry.</p>
+          <div class="cover__stats"><span class="chip chip--y">3.4 MB vs 15–40 MB</span><span class="chip">fully offline</span><span class="chip">byte-identical rebuilds</span></div>
+          <div class="cover__links"><a class="link" href="https://charge-simulation.vercel.app" target="_blank" rel="noopener">Open it ↗</a><a class="link" href="https://github.com/prradyumn/ChargeSim" target="_blank" rel="noopener">Code ↗</a></div>
+        </div>
+      </article>
+
+      <article class="cover" id="issue-mistri" style="--tint:#3FA9D6">
+        <div class="cover__top"><b>#08</b><span>Bilingual lesson · Grade 7 geometry</span></div>
+        <div class="cover__art">
+          <img src="assets/work/mistri.jpg" alt="Mistri-ji's Workshop: Swiftee the bird in a carpenter's workshop, next to the line 'One window frame. Two useful ideas.'" loading="lazy" width="1200" height="750">
+          <span class="sfx cover__sfx" aria-hidden="true">TAK TAK!</span>
+        </div>
+        <div class="cover__body">
+          <h3 class="cover__title">Mistri-ji's Workshop</h3>
+          <p class="cover__desc">A 46-screen lesson on complementary and supplementary angles with Swiftee the bird, ending in an 8-round game. Switch between English and हिंदी on any screen and both text and voice change.</p>
+          <div class="cover__stats"><span class="chip chip--y">527 clips × 2 languages</span><span class="chip">46 screens</span><span class="chip">runs offline</span></div>
+          <div class="cover__links"><a class="link" href="https://mistri-ji-dun.vercel.app" target="_blank" rel="noopener">Play it ↗</a><a class="link" href="https://github.com/prradyumn/Mistri-ji-s-Workshop---Offline" target="_blank" rel="noopener">Code ↗</a></div>
+        </div>
+      </article>
+
+    </div>
+    <div class="issues__rail" aria-hidden="true"><span>#01</span><span class="bar"><i id="rail"></i></span><span>#08</span></div>
+  </div>
+</section>
+
+<!-- ================= THE STRIP ================= -->
+<section class="sec strip" id="strip" aria-labelledby="strip-h">
+  <div class="wrap">
+    <div class="sec__head">
+      <div class="sec__no">02 · The strip</div>
+      <h2 class="h2" id="strip-h">How a build<br>actually goes</h2>
+      <p>Homework Saathi in four panels. The story and the numbers come straight from the build log.</p>
+    </div>
+
+    <div class="strip__grid">
+      <div class="panel panel--1" data-panel>
+        <span class="caption panel__cap">Panel 1 · The brief</span>
+        <p>A Hindi, voice-first homework helpline on WhatsApp for parents of Class 5 children in government schools. Many of these parents left school before the class their child is in now.</p>
+        <div class="panel__phone" aria-label="Example WhatsApp exchange">
+          <div class="msg msg--in" lang="hi">बेटी का सवाल है। मैं उसे कैसे समझाऊँ?<span class="mono">Parent · 8:42 pm</span></div>
+          <div class="msg msg--out" lang="hi">उससे कहिए: “पहले 150 को 100 और 50 में तोड़ो।”<span class="mono">Saathi · a sentence to say, not an answer</span></div>
+        </div>
+      </div>
+
+      <div class="panel panel--2 dots" data-panel style="--s:11px">
+        <span class="caption panel__cap">Panel 2 · The trap</span>
+        <p>The NCERT textbook PDFs ship with a text layer, so ingest looks solved. Copy the text out, chunk it, embed it, done.</p>
+        <div class="pdfpage" lang="hi">
+          <span class="bubble" style="position:absolute; right:18px; top:-34px; font-size:1rem; --tail-x:30%" data-sfx>Easy, right?</span>
+          लगभग <b>150</b> किलोग्राम … ₹24 × <b>150</b> … 10 और <b>100</b> से गुणा
+        </div>
+      </div>
+
+      <div class="panel panel--3" data-panel>
+        <span class="caption panel__cap">Panel 3 · The twist</span>
+        <span class="sfx sfx-wait" aria-hidden="true" data-sfx>WAIT.</span>
+        <p>Tesseract's Hindi model read the digit <b>1</b> as a danda and deleted it. On one page it lost 36 of 97 numbers and invented 30 that weren't there, all inside prose that reads perfectly.</p>
+        <dl class="ocr">
+          <dt>Page</dt><dd>₹24 × 150</dd>
+          <dt>OCR</dt><dd class="bad">₹24 × <s>1</s>50</dd>
+        </dl>
+        <p>A parent teaching “₹50 a kilo” from a page that says ₹150 has no way to catch it. The metric that looked best, prose accuracy, belonged to the least safe pipeline.</p>
+      </div>
+
+      <div class="panel panel--4" data-panel>
+        <span class="caption caption--ink panel__cap">Panel 4 · The rule</span>
+        <p><b>Nothing gets chunked until extraction clears a measured bar</b>, checked against pages transcribed by hand.</p>
+        <div class="metrics">
+          <div><span>Prose character error</span><b>0.7%</b></div>
+          <div><span>Numeric recall</span><b>100%</b></div>
+          <div><span>Corrupt tokens left</span><b>0 / 30,478</b></div>
+          <div><span>Pages → chunks</span><b>190 → 248</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strip__moral">
+      <blockquote>“The hard part isn't generating the answer. It's knowing when to refuse.”</blockquote>
+      <p class="src">Where it stands: ingest is done and retrieval is being evaluated. Refusal calibration and a 25-parent pilot come next. <a class="link" href="https://github.com/prradyumn/homework-saarthi" target="_blank" rel="noopener">Read the log ↗</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ARCHIVE ================= -->
+<section class="sec" id="archive" aria-labelledby="archive-h">
+  <div class="wrap">
+    <div class="sec__head">
+      <div class="sec__no">03 · Back issues</div>
+      <h2 class="h2" id="archive-h">The archive</h2>
+      <p>More games, lessons and tools. Most are maths and English games for Grades 3–8 built at ConveGenius; a few are side quests.</p>
+    </div>
+
+    <div class="ledger" id="ledger">
+      <a class="ledger__row" id="arc-mela" href="https://melastory.vercel.app" target="_blank" rel="noopener" data-img="assets/work/mela.jpg">
+        <img class="ledger__thumb" src="assets/work/mela.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#09</span><span class="ledger__title">The Mela Before Sunset</span>
+        <span class="ledger__what">Illustrated story game in 7 languages, from English and हिंदी to Odia</span><span class="ledger__tag">Story · 7 languages</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://oauth-runwayproj.vercel.app" target="_blank" rel="noopener" data-img="assets/work/oauth.jpg">
+        <img class="ledger__thumb" src="assets/work/oauth.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#10</span><span class="ledger__title">OAuth Runway</span>
+        <span class="ledger__what">How long until users can connect your AI agent to an app? A research agent writes the guide live</span><span class="ledger__tag">AI · dev tool</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://cat-game-livid-chi.vercel.app" target="_blank" rel="noopener" data-img="assets/work/cat.jpg">
+        <img class="ledger__thumb" src="assets/work/cat.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#11</span><span class="ledger__title">Pirate Cat</span>
+        <span class="ledger__what">Pixel-art platformer: jump, dash, guard and drop through platforms</span><span class="ledger__tag">Game · side quest</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://cardgame-six-olive.vercel.app" target="_blank" rel="noopener" data-img="assets/work/numberflip.jpg">
+        <img class="ledger__thumb" src="assets/work/numberflip.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#12</span><span class="ledger__title">Number Flip!</span>
+        <span class="ledger__what">A Grade 6 card game of number properties, with a robot opponent you can catch cheating</span><span class="ledger__tag">Card game · Grade 6</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://crossroad-game-seven.vercel.app" target="_blank" rel="noopener" data-img="assets/work/crossroads.jpg">
+        <img class="ledger__thumb" src="assets/work/crossroads.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#13</span><span class="ledger__title">Crossroads</span>
+        <span class="ledger__what">Linear pairs and vertically opposite angles: a 32-screen lesson and 4 practice rounds, English + हिंदी</span><span class="ledger__tag">Lesson · Grade 8</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://integers-story.vercel.app" target="_blank" rel="noopener" data-img="assets/work/integersstory.jpg">
+        <img class="ledger__thumb" src="assets/work/integersstory.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#14</span><span class="ledger__title">Monsoon Gates</span>
+        <span class="ledger__what">Pari and Guddu at the dam: integers as water levels and gates</span><span class="ledger__tag">Story game · integers</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://final-integers-game-pod-b.vercel.app" target="_blank" rel="noopener" data-img="assets/work/integerspodb.jpg">
+        <img class="ledger__thumb" src="assets/work/integerspodb.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#15</span><span class="ledger__title">The Rainy Day Challenge</span>
+        <span class="ledger__what">A rainwater tank as a number line from −3 to +3; the story plays itself, scroll to move ahead</span><span class="ledger__tag">Story game · integers</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://brand-new-game-rouge.vercel.app" target="_blank" rel="noopener" data-img="assets/work/brandnewday.jpg">
+        <img class="ledger__thumb" src="assets/work/brandnewday.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#16</span><span class="ledger__title">Integers: Rise and Fall</span>
+        <span class="ledger__what">The same village, a new mechanic: the water rises and falls as you add and subtract</span><span class="ledger__tag">Game · integers</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://game-five-olive-51.vercel.app" target="_blank" rel="noopener" data-img="assets/work/gamefive.jpg">
+        <img class="ledger__thumb" src="assets/work/gamefive.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#17</span><span class="ledger__title">Integer Snakes &amp; Ladders</span>
+        <span class="ledger__what">The board game, rebuilt so every move is a positive or negative number</span><span class="ledger__tag">Board game · integers</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://game-582z.vercel.app" target="_blank" rel="noopener" data-img="assets/work/balloon.jpg">
+        <img class="ledger__thumb" src="assets/work/balloon.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#18</span><span class="ledger__title">Sky Balloon</span>
+        <span class="ledger__what">Plus balloons lift, minus weights sink: steer a hot-air balloon with integers</span><span class="ledger__tag">Game · integers</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://integers-village-game.vercel.app" target="_blank" rel="noopener" data-img="assets/work/village.jpg">
+        <img class="ledger__thumb" src="assets/work/village.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#19</span><span class="ledger__title">Story editor</span>
+        <span class="ledger__what">An in-browser editor for scenes, dialogue and voice timing, so writers can change the story without code</span><span class="ledger__tag">Tool · authoring</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://punctuation-fg.vercel.app" target="_blank" rel="noopener" data-img="assets/work/punctuation.jpg">
+        <img class="ledger__thumb" src="assets/work/punctuation.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#20</span><span class="ledger__title">The Punctuation Puzzle</span>
+        <span class="ledger__what">Letters with legs and a lot of opinions about full stops</span><span class="ledger__tag">English · game</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://bridge-word-game.vercel.app" target="_blank" rel="noopener" data-img="assets/work/bridge.jpg">
+        <img class="ledger__thumb" src="assets/work/bridge.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#21</span><span class="ledger__title">Word Bridge</span>
+        <span class="ledger__what">Fix the bridge by finding the two words that mean the same</span><span class="ledger__tag">English · synonyms</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://synonymsandantonym.vercel.app" target="_blank" rel="noopener" data-img="assets/work/synonyms.jpg">
+        <img class="ledger__thumb" src="assets/work/synonyms.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#22</span><span class="ledger__title">Word Tree</span>
+        <span class="ledger__what">Jhumru rides out to the Word Tree, where somebody always needs another word</span><span class="ledger__tag">English · antonyms</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://prradyumn.github.io/lbd-2/" target="_blank" rel="noopener" data-img="assets/work/lbd2.jpg">
+        <img class="ledger__thumb" src="assets/work/lbd2.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#23</span><span class="ledger__title">Aanya's Word Quest</span>
+        <span class="ledger__what">A twilight forest path, and a word at every turn</span><span class="ledger__tag">English · game</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://the-lost-magicbook-flipbookplusgame.vercel.app" target="_blank" rel="noopener" data-img="assets/work/magicbook.jpg">
+        <img class="ledger__thumb" src="assets/work/magicbook.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#24</span><span class="ledger__title">The Lost Magic Book</span>
+        <span class="ledger__what">A page-turning flipbook story with a game hidden inside it</span><span class="ledger__tag">Storybook · game</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://simulationiti.vercel.app" target="_blank" rel="noopener" data-img="assets/work/simiti.jpg">
+        <img class="ledger__thumb" src="assets/work/simiti.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#25</span><span class="ledger__title">USB-C Port Explorer</span>
+        <span class="ledger__what">24 contacts on a tongue: light up each signal group, explode the part, then assess and practise</span><span class="ledger__tag">3D sim · ITI course</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" id="arc-volcano" href="https://github.com/prradyumn/volcano_sim_assets" target="_blank" rel="noopener" data-img="assets/work/volcano.jpg">
+        <img class="ledger__thumb" src="assets/work/volcano.jpg" alt="" loading="lazy">
+        <span class="ledger__no">#26</span><span class="ledger__title">Volcano Sim Asset Pack</span>
+        <span class="ledger__what">A stratovolcano generated in Blender with Python: 12 GLB bundles, baked smoke flipbooks, same seed gives the same output</span><span class="ledger__tag">3D assets · Blender</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+      <a class="ledger__row" href="https://github.com/prradyumn/referral-hub" target="_blank" rel="noopener">
+        <span class="ledger__no">#27</span><span class="ledger__title">Referral Hub</span>
+        <span class="ledger__what">Internal employee-referral app: Google sign-in for the work domain, Postgres, real rows</span><span class="ledger__tag">Full-stack · Next.js</span><span class="ledger__go" aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+  <div class="peek" id="peek" aria-hidden="true"><img alt="" id="peekImg"></div>
+</section>
+
+<!-- ================= MISSION LOG ================= -->
+<section class="sec" id="log" aria-labelledby="log-h">
+  <div class="wrap">
+    <div class="sec__head">
+      <div class="sec__no">04 · Mission log</div>
+      <h2 class="h2" id="log-h">Where I work,<br>what I use</h2>
+      <p>One company so far, two roles. The tools are the ones in the repos above, not a wish list.</p>
+    </div>
+
+    <div class="log">
+      <div class="log__jobs">
+        <article class="job job--now">
+          <div class="job__head">
+            <h3 class="job__role">AI Design Associate</h3>
+            <span class="job__meta">ConveGenius.ai · Noida · Feb 2026 – now</span>
+          </div>
+          <ul>
+            <li>Design and build learning games and interactive storybooks for Grades 3–8, in English and Hindi.</li>
+            <li>Turn a curriculum objective into story, screens and game rules: user research on how children learn, Figma flows, PRDs with user journeys and acceptance criteria.</li>
+            <li>Build the 3D teaching simulators for the vocational mobile-repair course.</li>
+            <li>Review builds in QA, and read pilot usage data to decide what changes next.</li>
+          </ul>
+        </article>
+        <article class="job">
+          <div class="job__head">
+            <h3 class="job__role">AI Design Intern</h3>
+            <span class="job__meta">ConveGenius.ai · Noida · Jul 2025 – Jan 2026</span>
+          </div>
+          <ul>
+            <li>Market and competitive research for client product positioning and communication.</li>
+            <li>Excel KPI dashboards that leadership used for operational and strategic decisions.</li>
+            <li>Structured documentation and workflows across cross-functional teams.</li>
+          </ul>
+        </article>
+        <div class="kit kit--edu">
+          <h3>Training <span>the origin</span></h3>
+          <dl>
+            <div><dt>MBA, MJP Rohilkhand University, Bareilly</dt><dd>after a 3-year BBA</dd></div>
+            <div><dt>Foundation in Data Science</dt><dd>IIT Madras</dd></div>
+            <div><dt>Product Manager Certification</dt><dd>Udemy</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="log__kit">
+        <div class="kit">
+          <h3>Design <span>research → spec</span></h3>
+          <ul><li>Figma</li><li>Miro</li><li>User research</li><li>User journeys</li><li>PRDs</li><li>Acceptance criteria</li><li>Prototyping</li></ul>
+        </div>
+        <div class="kit kit--red">
+          <h3>Build <span>spec → shipped</span></h3>
+          <ul><li>three.js</li><li>Blender + Python</li><li>GSAP</li><li>TypeScript</li><li>Vite</li><li>Next.js</li><li>FastAPI</li><li>Postgres</li><li>Vercel</li></ul>
+        </div>
+        <div class="kit">
+          <h3>AI <span>shipped → measured</span></h3>
+          <ul><li>Agent pipelines</li><li>RAG</li><li>Eval harnesses</li><li>Prompt engineering</li><li>Gemini</li><li>Groq</li><li>Claude Code</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ORIGIN ================= -->
+<section class="sec" id="origin" aria-labelledby="origin-h">
+  <div class="wrap">
+    <div class="origin">
+      <figure class="origin__photo">
+        <img src="assets/portrait.jpg" alt="Pradyumn standing against the ConveGenius logo wall in the Noida office." loading="lazy" width="480" height="302">
+        <figcaption class="caption">Noida · the ConveGenius wall</figcaption>
+        <span class="bubble" data-sfx>I write the PRD first. I just don't stop there.</span>
+      </figure>
+      <div class="origin__text">
+        <div class="sec__no" style="grid-column:auto">05 · Origin</div>
+        <h3 id="origin-h">Business school, then a lot of builds</h3>
+        <p>I trained in business: a BBA, then an MBA at MJP Rohilkhand University. I joined ConveGenius in July 2025 as an AI design intern, and the job was research, PRDs and Figma.</p>
+        <p>The work kept asking for more than a spec, so I started building it: lessons, games, 3D simulators, agent pipelines. <strong>Thirty live builds later, I still start with the user and the PRD.</strong> I just carry it through to something you can play.</p>
+        <p>I like problems where a wrong answer is expensive, like a parent teaching the wrong number or a child learning the wrong rule, and I like to measure before I claim.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SIGNAL ================= -->
+<section class="signal" id="signal" aria-labelledby="signal-h">
+  <div class="signal__panel">
+    <span class="caption">06 · Signal</span>
+    <h2 class="signal__big display" id="signal-h">Let's make<br>the next <em>issue.</em></h2>
+    <div class="signal__row">
+      <p>Product design, design engineering, or a learning game that needs to exist. I reply to everything.</p>
+      <div class="signal__links">
+        <button class="copy" id="copyEmail" data-email="pradyumnawasthi03@gmail.com" aria-label="Copy email address pradyumnawasthi03@gmail.com">
+          pradyumnawasthi03@gmail.com <span aria-hidden="true">⧉</span>
+          <span class="sfx" aria-hidden="true">COPIED!</span>
+        </button>
+      </div>
+    </div>
+    <div class="hero__actions">
+      <a class="btn" href="mailto:pradyumnawasthi03@gmail.com" data-magnetic>Email me <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn btn--paper" href="https://api.whatsapp.com/send/?phone=918791432596&text=Hi+Pradyumn%2C+got+your+contact+from+your+portfolio." target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn btn--paper" href="https://www.linkedin.com/in/awasthi-p/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn btn--paper" href="https://github.com/prradyumn" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+  <footer class="foot">
+    <span>© 2026 Pradyumn Awasthi · printed in Noida</span>
+    <span>Set in Archivo, Schibsted Grotesk &amp; Bangers · 3D in three.js · motion by GSAP</span>
+  </footer>
+</section>
+
+</main>
+
+<div class="dock" id="dock">
+  <a class="btn" href="#work">The work</a>
+  <a class="btn btn--paper" href="#signal">Say hello</a>
 </div>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">Pradyumn</div>
-  <div class="nav-links">
-    <a href="#about">Origin</a>
-    <a href="#skills">Powers</a>
-    <a href="#experience">Missions</a>
-    <a href="#projects">Projects</a>
-    <a href="#contact">Signal</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section id="hero">
-  <svg class="web-overlay" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
-    <g stroke="rgba(255,255,255,0.6)" stroke-width="1" fill="none">
-      <!-- Concentric web arcs top-right -->
-      <path d="M1200,0 Q900,200 800,400" /><path d="M1200,0 Q1000,300 900,500" />
-      <path d="M1200,0 Q800,100 700,300" /><path d="M1200,0 Q1100,100 1050,300" />
-      <!-- Radial web lines from center -->
-      <line x1="600" y1="0" x2="600" y2="800" />
-      <line x1="0" y1="400" x2="1200" y2="400" />
-      <ellipse cx="600" cy="400" rx="200" ry="200" />
-      <ellipse cx="600" cy="400" rx="350" ry="300" />
-      <ellipse cx="600" cy="400" rx="500" ry="400" />
-    </g>
-  </svg>
-
-  <div class="hero-content">
-    <div class="hero-text">
-      <div class="hero-badge">★ PRODUCT HERO ★</div>
-      <h1 class="hero-name">
-        <span class="highlight-red">PRADYUMN</span>
-        <span class="highlight-gold">AWASTHI</span>
-      </h1>
-      <div class="hero-title">Product <span>Designer</span> & Builder</div>
-      <p class="hero-description">
-        MBA student. Spider-sense for user pain points. Deadpool's relentlessness in ideation.
-        Batman's precision in execution. Building AI-powered digital products that actually work.
-      </p>
-      <div class="hero-cta">
-        <a href="#experience" class="btn-primary">View Missions</a>
-        <a href="https://api.whatsapp.com/send/?phone=918791432596&text=Hi+Pradyumn%2C+got+your+Contact+from+your+portfolio.%0AHow%27re+you+%3F&type=phone_number&app_absent=0" target="_blank" class="btn-secondary">Send Signal</a>
-      </div>
-    </div>
-
-    <div class="hero-photo-panel">
-      <div class="action-burst"></div>
-      <div class="photo-comic-frame">
-        <div class="photo-border-outer"></div>
-        <div class="photo-border-inner">
-          <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAEuAeADASIAAhEBAxEB/8QAHQAAAgIDAQEBAAAAAAAAAAAAAQIAAwQFBwYICf/EAEwQAAEDAgMFBQUEBwUFBwUAAAEAAgMEEQUGIQcSEzFBFCIyUWFCYnGBkQgVI1IWM6GxwdHhJFRygvAXNENE8SZFkpOio8Jjg5Sy4v/EABoBAQEBAQEBAQAAAAAAAAAAAAACAQMEBQb/xAAoEQEAAgICAgEDBAMBAAAAAAAAAQIDERIhBDETFEFRBSIyYRUjcZH/2gAMAwEAAhEDEQA/AGFN7ScU9gB+9bEQ6JuFp4eS8o1wpkBTELZiJThIprDTeinAW04N1Ozt/Log1PZvIJTTW6LcdnUECDSGHTwqswrevpvdVT6axRO2m4PoiYdfCttwNEOzJsarguUEK23Z/JAQX9lBqTCQLq0QrPfACCrRT+6g1gp7oiHTwrZiH3U3A01QawQXUFNe62Yp9Uez2WDWdnv7KPZz+VbMQut4URT3WjW9n91QQLacBOKbRVpTWCmvruo9mW0FP6JxTKUtSKVycUrurVtezdd1OIUU1Apbpm0q24p9fCn4Hog1HZWhMyl91bYU/tbqbs5/KmjTUCl9NURS6+FbY0+nJMKbTwq4hLT9m8mqCm91bfgeiPZ/dW/9GqFN6FN2f3VtOB6JuAVmoGq4HooYO7yW2FPoj2f3Ujoa1kGnJHge6toyn7g06I8BbwGp7Pr4VOze6tuILI8ALRp+zW6Iin9NFt+A1HgeTUGp7N7qIplt+AiIPRBqOzOU7KtuIL+yoYPRBqOzIiB3ktt2dQQeaDVClQNLrqtvwPRTg+ioac0zkezn8q23B15KcDTkg1JplDTO/KtvwPRDg2CDU9m91B8C23B08Khh91SloQ1ERq9rHIsb6Lk6KRGjw1khmmqbdVaSxxCerUwp9FlhgIVgjUqYYp9OSbge6s0R6bqsEQOoQa003oqn03ktxwtLJXw+SJaU0/uodmW2fF6JeD6INV2f3VOCtlwrIiH3UGrfT6K0Q3Cznw6G6Iiv7OqDA4PKyHBWw4Xe9URCgwBAj2a62PBHkpwkGvFN7qfs6zxFf2U4iVKa8Qt3fCrBTnd5LOETeiYReTU2lhdn91HgNWcIm/lTiLyUjA4Puo9n08Kz+B7qYRa+FFMAU6cQ+6s8RpxFp6oNfwEW0/mtiIbnkrBDcclWtJa3s6PA9Fs+ApwbK1NZwVOAtn2e/PRTgLd6S1op/dREPm1bPs9/ZTiFTyGq7PYck3Z7i62fA9FODbolRrmQ6BHga8lsmQaBvom4CrkNX2f3Uez6eFbTgN8lODonIavsyYQ2Wz4KHAcdQFg1/Z1BB5rYcFMIbLdjXcBEU+m9urZcL3UeCp5DVmnuhwLracD0Q4OvJOQ1vZ9bWU4C2ZhaeShhatGsNOiKaw8K2Qp05hQak0yHZ/RbcU91OAg1AgsPDoldD6aLccD3UDT3Phsg8Rb6KFisAujuhREBN3omDFYB5JgCSrAYLJ2qAKxgWcQWMarQEoGqYeJJgMBqoQnjHNOWNsuYxzHdThd1XsborOHbyQYYhspwh+VZe57qIjQYT4vdSiL0WeY1OHYIMLhNR4azOGpw2oMThqGP0WXw/RER+iramIIgnESy+E1MIrpoYrYmpxEskQqxkS2IGIIvRMIlmcJERqksURWTCLVZYj91WCL0XJTEEPk1MIXflWYI1YIr+yr0MMQ+6nZCs0ReadkWnJbr8pYXBR4KzRForOCq1CmtMSPCBHJbA0/opwvdWahO2CyFqbg6rPjhv7KhiN/Cs6UwRFZEQtus3he6nEWoTiMAQ6BHgrPEWnhR4TUqlgiH3UTDos0RIiJaNfwERAthwdE3D0sg13BR4PurYcL3UeFdBrjDyTcF3kthwUOEt3A13B05KcFxWxdChwlg14isjwvdWw4XNQReiDAEXom4XurNMVlOH3VuxhcJHhLM4SPCWDB4SXhe6s8x2CHDut2OYgJrKwhHdU8RWGa6JwLJgNE9loQDzTAXN01tNeSNkBA1uiwIsGhUu0ILI/8ACrFUCuZ7RtqX6N45Jg9Bh7KuaAAzySvIFyLgAD0I19VsU5TqGTOvbqUWpVtl4PZntFwvN0hoxTyUWIsZxDC874IvYlj9L8x06rM2m59o8mQUjH0b62rq7lkYk3Axgtck2PnyWfHO9HONbey3WosYueZB2rYLmSrbhtTTyYbXPNmMe/fjk+D7Cx9CPmujj4KL0mk6ki21ZaoGaBXAIxsvZIhqjh6o8NZW7qju3W60Mbd91Hh3WRuqBmqaUpEacR6K/h+iYMWilkenhTiNXAeSbd6rNSlSI0QxXMjVgjat4igR6qxkas3VYxqqI0EDFaI1YyPvK6NqTIpESsZHp4VaGqwMUqUsi91Nw1fupt1BjFmtkOHr4Vk8PVER6oKo4vasgY9eSyQxAs91Bi8PXRWGNuiuDNQiWIMXh6BNw1eG3sn4aqBjcNHh+iyN1EN81gxxH5phHcrIEd1YIx+VBiiL0REayt3zQewjl1RLF3NfCoI/NZFvZ6pjHbkgxOGhw3LJ3LBCyDFMdkLWKveLpLaoKiLoWT2QOiAWSokoLOQinwUUTkpzSyICbdTAJvaQARsrGNTMZ5rRVZOAnLeqUiwugDvCuNbb9pWOZXx2lwfBGwQF8AmkqJIRIX3JG4AdLaeXVewzBtTyXguLyYVX4uRUxP4c3DgfIyM+RIHP4XsmxjK+UtolDFWGaCuhGkdRTvuWfAjUdNF0x/tndo6RfuNRLxuyza7WY7jEGA47SQMqJ78OppxuAkC/fZ8jqPovVZ62V0OZ6x+INqjSVpYBxQL3tyuOv7Cr8obJMu5crzXUnGmntbiyuu8DqB0HxXQmNs0AKr3jnuhFZmNWct2c7LDlfFXYjNiJqqgs4YeGBgYy4JsLnU2Gq3e0vZ7TZzZA+ScwT09xHIzoDz+IXuwG/lTgLnN53yVFIiNOH5P2NVuC5hgxXEMSjqm0z+JDHCzcBf0LyTfTyH1Ww24bQccyazDcLwPgsnqI3ufVSx7+5awswHS+ut79F2Dh3Whzhk7B80UQpMUpxI0G7TbUHzB5j5JGXd4m6eGo6cs2R7Y8SxfGIMDzJTwzy1BIhqoWcM3sTZ7OXTmLLu1MWyRB7dWnkud5Q2PZcy3i/wB50j5pqgAiN879/h3FjYcvmuk08Qigawcgqy8JndSkTEdjbRSyfcumDddFzWr3U4ZZOBbmpZZxAARsmTgLQoZqnARATgKggFk9kQEwCkAM0TsYmYFYBZBANArAEAFYNVgLVYAoBZMEsoQE4CARWVEsp1KJQ6LdSGYNUCEzfCofEq4pCyJR5oFYABqjZRFBAE1rJUbqgeSYFVXUu5NDIuld3hYbyqBVjDoUBYGtv5oE+SD3aqu6AkoFC6KCp5SHxIu8SrJUiPSHxIkpVllIiEEQtBUugUEHOgLogJx7KLAsqlGDVWAKNTgLQALhVzxExua3nbRX2WlznmTDcp5eqMbxV0hggsAyIXfI8mwA9VWt9QPn7aBsazK7H63EsJ3KuCpnfLw3mz2F5ufQi5XRfs/ZNxzKcdb96SMtV7n4LDdkYYDqT5m/RYeB7fssV1WIa7CcRw4E2Em+yVgHmbWI+hXY6GZlTBHNC8SRSMDmPBuCDyIK75LZYpxs5UpSZ3C9gsm3dE7AmAavM6lDEQLckJ38ONz7chdeHkzJipkdw6hgAPLhj+SqlJv6eXyvLp4+uT3QCZgXhRmTGP7yz/yWfyR/SPGD/wA2B/8AZZ/JdPppeL/MYPxL3rPEmavAfpHjH98H/ks/kp+kWNf3z/22fyT6e5/l8P4l0RqcBeGwDMOK1GM01NPUiSOQkPG4BoGE9B6L3UR34w7zUXpNepe7x/Ip5FOVUIUtZOQsTE6ltFSSVLzaONheT5AaqHpee2g57y3kiibPjtfuSyNvDSxDfnl+DPL1Nh6rkdR9p6gZOW02T6iSIHR8tcIyfkGH965TgEWI7XNrbfvOeRhr5nyPPPhRMBO4PgBYL6fwXZLkeio2wswKneGNtxJHEvf8Tdey2PHi1Fu5cIm+T16ecyR9oLKOO1kdHikFVgU0hsySoIkgv6yDUfEgD1XZGPY5ge14e0i4IdcELgW2PYnRVOHmvynSiGsYf1LL2kXoNj9fjuRtmFd/tAhkpKPCO9SyPO+98Z/4dvjYD/Hboud60tG6f+NibxOrOxBOzxL5TxTbxtAx7E5Y8o4bDQ0rD3GCnFRLbzeX3Z9AFbhG3baHg2IRNzTh1PXU5Nnh8Ap5Pk9ncv8AEFb9Nb192/LD6rBTe6uM7UNq9RQbOMNzTkyWCQVlUyImoj39wbj7sIvoQWWXiP8AbVtKzRh9PSZYweOnrIo/7XU09NxjI/zAeCxgt01Pqsr495jbZyR6fTysZzuvkui2xbUcr43H+lEnboL3ko6mljiJZ13HxgEH6j0Xqs67ac1YNmmiqsPhpJ8t18cVXTMkpvxHwEDfZv38fP4XT6a+z5IfR4RBssOirKarw6Gvp5mSQTwiWOQcnsIuD9FwGfa3m3GNqcuE4DWUkGAx1JBkMDH2gj/WSF56GxI+IXOmOb7/AKXNtPozf73onBuvmHMm2nOeZ8ckw7IVHNSwAkQmOmE1RKPznfBDAfK2nmsZ+fNtGW3x1eNGtFPfUVlDGYz8SACPkV0+nlPyQ+qCWjmtJimPw0m9FThs0jPGSbMC8rkraTR5vylNVwxdlxKAiKqpwbhhPJ7D5HX4WI9VmYNgdNjMhNazjUkR1iPKQ+vmB5LIx8NzZ5M+e83jHT7sCs2n4bDMWSYnRCx/4Ub5B9RcLdYBnWnxGMTRvp6qC9jLTPvufEf9Fv56fC6KmAqYqeCA9wDhi30AXjMdwXCjWfeWW6uioKwjdkD4ZBFKPfAHMcwVsTE/Zwy1vi7i/f8AbocUjJImyRvD43i4I6olebypO6gy+52IV1LUSxPL5H07HsYwHoN/VabGcz4pVO3MLpKt8h/V09MO+fUv6f65qPj3L0T5cUpG/cve2UuuTVGYs3YXafGsHxShpb61Aqe0MZ6vA5D6r08+PVc2W6074hq4oSRIzqLcx6qvj63Ca+dHLjaNS9kn3HeLdK5wzFcbhglZQdrrZZDYRsN3n4EnuDzK1FXimZqCWOpx3L1VRUheA+qZWiYx36kAA2W/HETqZTHnTavKtXR80YnJg+DVFfFAZ3Ri4YAT87Dn8FpMjZjmxyrl3ayOqgDLvLABuP6D+iSTGaqHLGLN4pfNBTPfHI/UjRa01MtNhGMTQzPhkZh8rwWGxD7cx6+q2tNRMON/K53paJdFsQN4o3Fl43Jk80le1skj3/g9TfyW+zBJIzBK58TyyQQPII0I0XO8anT34c8ZacobJ+9q7dNkLWFzYDzK53gWIvwrDhiMl5zT4eZNx58ZEeg+qarq63FIopKfEqdkkgB40wJYBboB/wBFXxvPHn7jenQBJGTuiaMnyDwUVy6rp8w4e+OpZiGG4xBvgTRRR7kgHmNV7jKk1TU0DnyxzxsBHD4zNw/TnZTNIiNu2HPN7cZhtHqshWFKTZcnqVqIFBFIooj5rAEyiVaOf9VYAlTNWVSZgViRvhTBaD0uvP59yvS5ty5Pg9bfhS2N2GxYQbgj1XogEToq3ruB85M+zxWR4hd+Mk0d/YjHE+HOw+K79luhbhmEUtA1pEdPGI2DnuAcguFbbdrebcBzpNgmAyx0FPTMYTK+Bkj5y8A374IAF7aeR+Xodhm1rFc24q7BMdp4Hz8AysqYY9zUECzxy1v/AKvp6MlMt6crenKk1idQ7aw3CYaKqMtIBV4Xld1FSHGB1/Jc1laGTyW6OK6VW6QFwXK6vEKNtZMx9VTscyQggyAWN16PF9y+H+s1m0V0yAUQbrCOIYaPFiVCPjUs/mlOL4SP+9aD/wDKZ/Ne9+f4X/DZKXbZaz79wUDXGMNHxqmfzRfjuAiMu+/cL0F7CrjJ/ejfiv8Ah6nJ1MajHxJ0p4S6/qdP3XXR4o92JrfReUyHhs9LRcSqi3J6s8WQfkZ7A+n717BfNzTu79X+nYfiwxEhZYGN04qsNngLbtkjewj4iy2FlCxr+7uqHufFWySui2c7ZI4cf/BhifJSTTHQMDwQJPhqD8F9nUc0ctJHLG9kkbxdj2G4I8weoXNdrOyHCs43rIbU+IgWEjNCfQ+f+uS5CzZDtXwnepsExSthpQdBT1ckIPyYbL1WmmbuZ1LhHPH1rcO6bZdoFNkPK7qyF1LPi0pDKKllP6w3FyQDfcAvr52HVcJzztCzTtA2UYjUYhhFFRUdPXU4EtKHgSc7ggk8jwys/APs/ZsxjERV5oxTggn8R5kMsr/mV3mLZ7gkWTBleOmYzDxGY9w6l9+ZPqs3jxa13LdXv76hzj7Ij8JmyNWQwGE4jHWntQH6zcIG4fhz+hWZ9qOHB4shzzVLY2Vj3xtpPzvfvi9vPS5K8VimwLNmB4rJVZRxWaP8j2SGN4HlvggoYbsIzzj+KxVGbcbfwxo+WWd80pHkCSun+r5Pk5Mjlx46c+po647FKsuc/sox6Mxk8r8A3/gvo37LFPTDZPRzMhAlnqZ+I/8AORIQP2AJs87JmVuzilyplzh08dPMyUGT2yL3J9Tdep2NZPq8mZGp8Erpo5qiOeSUvj5APN7KcuemTHP/AEpjmt3Mftc4XAMEwuv3GCVlbwr+hjebf+hYWJ5YZj32csuVdJHxK2ippJI7cyBI8EfRdE28ZExXPOBU1Bh1RHDJBVsqLv5GzHi3/rW/2cZTly9s6wzLdfLHPPSRvY97OR35Hv8A42URmiMcRHuF8O5fPuUdqU+H7GsRy/LUEYlTv7Ph53teFJfX/J3z/wCALJ2d5MrqXY3mPM4if2vEaKWCkYOfAA1t/jN/oFu8ybAcWrc1yz4ZU08GGzzb53+cYPO2vxX0FR4PRUuBQYLDCBSU8IhjZbkwCyq+Smv2/dERP3fGey9+cJsQno8mYjNT1c7AZI4aoRPkYPnra69hmjBdtEODVU2OYrXjDWM/HNRig4dvW5/YvR54+z9WzYvLX5YrIYY5HmThP03D6clq4NhmfcRnjixjG42QMdo+WYykfAXK6TlpbvZwmOmBsDoqjh49X0tVHVOp4IiaeIPu/wDE3+oA5MePmu+5LxmkZGHiYPpKkB8co5D4q3ZtkPCsk4GcOoSZpJTvzzPHflP8liY3kieOolrMt1zKKSR2/JTSs34JH+duYPqFwvniZnfpwzePeZi9PcN9mjDDjVE0UmMdhcx1xNGxkn7Doue4rSzYLWx1NVnB9dTM7skRpIo2F7+4zvgeZ5DrZbKny7nV792opMHP/wBQTPA+nNbmPI76qiP3tVU89QO/DHHGRFG8cn66khZExX7uGbFm8jq1Yj+2rndNHl6rnN+EyaN0lvyDUn6XWK+LGHzxxYM6g74Jf2iYx38rea9ll/Ba+DDKikxmeiqJJz/y0b2MAt6k6rydVkDHsNnd9wYrSzUZPcpa1hIiHkx41t6cgt+WNy528K8UrMRuYYtbS52p4pDVMwYRW1vUvN/S19VjR02Nvw6uqKyWh4fB3AynD76+dz6Ld0mUszzPHaanCaRvtljHyP8Alrb6r1X6OQty9NhsM540o71RILm9udv4J8kRGobXxL3tu0aa3IbbVNWT+Rn7ytrnSJkuVsRYbW4L9PklylgdVg8E/bsQZXTSkash4YYB6LNxyhdiWF1FCJuDx4y3iWva45rnknd9w9vjYJx4OE+3P8U3/wBH8XLL/wC5SJ5Iny4RjEbG3c+hkAA816DC8p1UeFV1DimMGtdUxmISCmZHwwfQK7LmW5sMM767GJMSdKNwb8DIwwfLmuk5Y7eKng5ItXf2aLJ2JU0VRBVSSf2eWHR41AuBZejzBiVFUYRVwU9THJLLGY2bhvzHNecrcg1cVRI/AsdkoYXnfNPJCJIwTztfl8ldFkOeqpZYMZx2aeORhYY6eMRAg+ZGpWWvSe3bFgz4omkemrjqocNopqmWnfVwQUx/DYdXiyx8Ky7RSycXCcbq8KpZRxI2XE0WvkCNF63LWUosFjML699bAyEQwxSRgCNgFreunmsaoyayORxwrEp8OjJvwgA9gPoDySckSzH4mStde2tqMMxigY18OL0OJAEAsLACR15L02XppuJJGXHhAXseQK19JlyvjP8AaMbfIPSBgXoKWCKmgEcVz6k6lRN+nbD48xfl6XkqslS6Dlzl7yqJrJVgiiiiwRRNZRabeB9pFBMFsJM1OEg+CsWAprKJgEHl835Dy3mgB2L4fDNIBZkhZ32fA8wtPQZbyfs3w6bFZH0+FUUduNKQSXnoL6k/ALoYGi8DtvyZVZ2yvHhtNMYJYpxURvtcXAI1HlYlVW1t6mekz13DLy1tTyFjtQKTD8fZxyQBHNDJFfytvgL3DDdfJ+BbC80x4w1uJ1NPTwA9+SMkks9y4Gq+qsMa8UEDJGneDLG51V5aUif2yykzPtbUbpiddfCO1iMRbTMyMHL7znP1eSvu6oa4xkdV8K7ZY3RbVMxsP99efqAV38DXKYlzz16eT4jgoJHFGCJ8zwyJj5HHowXXscrbMM4Zima2lwqanhPOaoG6B/FfVvelI3MvNGPbyDA+V4awbzj0C739n/ZNWy1sGZ8xUxjpYyJKSmkGs56Ej8nX1+HP22yzYZhGXpYq/FLYpiA1HEH4UZ9B1+a7bQ0zYQfbd5r5ufy4t1V6aYdez0rHNZ3tXHmskBACyK8DuYIpRzCZvIoDb0RDNUUW80BA0TDwoKNWWDAXTW0UA10T2Wg9UW+FS2iI8K3iJopZRMtUgVjFWDZNdA914LaftYynkVklJW1BrsYDQWYbTG8mvIvPKMa3uenIFe3L7dVxvbFsey1nXNBzBiOIYjREwgVUdORaXcFmG55WA/6Kb3ikblWPHOSdQ8PL9rCU4v2elydSGAc2SYmQ/wBe/wAPc/YvbZD+0pk7H8RioMVo5sEkkk4bJXzsmgF+W++zCPjYgdbL5p2i5GwfB6YxYAaqebiEM4hB7nquaxwV+G1rG1EMzN54BYPaHkspeLx0ZMc451L9UL+ygDda/BqZtHg9FRxvmeIKaOIPm/WGzALv9fNZzOWq1zOmS87I/FbCgTBDREeqwFRBLfVASUrkSgqEaioqyVKTE+arciT7yV3hQKUCoUpWWBUalUWqEoI2QQHqilUQN7SBQRsg5+CrAPJVMVzESZWBIPCrGoCxWNVYt0VjNUDphok5J2oHGv5k4ShFqBiGka8l5zF8i5YxWV01dhVNNM9+8ZDGN8n42uvSBFZ6NPNUGRctUTw6mwyBhHLuL0VNR08LAI4hYdFcBqnC0Tpa2isj8SRNHoSt4ixEJLohaLAmZqkBTMKyQ/tIpLpxurAzfCmCUJggsaiCluit0pZfWyKqTgrQyN1USpvIlYq5JWRjVJLJpYLCmcSSglZXS27jrBcp2mCPHMcw7ApK3EqI17wJKinD2BgZe3fAsT39QTyAXS5W7+i8VtEw6ujwaoxARYixtFG+p/BuBYC5e/XkB6Fcs1bTTp6PFvEZO3Fc6YDR4RiE1DBij6/nvSEWtryWqyBlumxjaRl+J8D5I6bEGVUxlGhji75+RIA+YV1RUvMsjJ4ZhODrxBY3Xttgb6ObMeJw+Kripo7HyYSbj62+i4YInb1eTMRSZfSsEvGjEoV7CtdhW+yCxWwC9T5aze1T3aqUQbIpbdEFVXsUbhFHuohdDeKBlEl1CeVkEOl0qiBKJKlefJR58kiyZBugooihsihdBaGSqKLBFFFEDIXUugtHPgdVaPNY7P2K1hVJXN8KsYqQVawqRYE41VY8KLNEFwKbmq7qwFA7eSdqrBThZYOEyRviTAoLAjewS3TKYVKXcU0fNKNE7OfyXTaVqnIJQdUbpIITs5oAo3SAwVgVQKYFYLAmb1ShEILAiDZKCjdAwKiRNdUoUDqoSg86KUqZTYaKzDKJszJqqdx4EQ1t1POywquVvhZq46CyzMTq/uvDpqMEP7PHaYeZIu/9hC7Yac5c81+ELauupKR80VM1kfDBcdzmQB5/HReZzrVYlHhFbh1NRx1DqyCKmrTJe4jMckkgHqRoLrY4ZSOrTNV712mGAehB75/16q7G5mGtrN8agRyj1tzH0uvdFInp5Odo7fJGK4Fj+XceGCYiyStdbh0Twwl9Qw/q7eflbzXutnGFNyRLJ94Pd9/Yo8veyK0jKZkYuI5CNN/V5IF7XsV07M9G/Ea3DoaBjOOwbsNQB+IA/TQ8xoANPVax+ARxSinZuvkYHgPtrYcz+xc8XiVrfk65fMvkxxV67LeZ6aeNsNdanl8HE9gn+C9SC3objoQuWCnMIllP6t72EE++B/Ir0WS69wrHURJdG8EsB6Ef0WZ/HiO4RhzzM6l7IFPyCrB1RuvA9qwot5JbqXRR0LKN5o3aESHtFRxudFL80qCE6JCigTqgVyARUcigKCiiwEIKJrrQqZS6BQBRRMsCqJrqLRzhhVgKqBsVYwqkrmn5p2FUgqwHVBaCnYbqq9k7FIuBumBVTFY30QW3RCUHzTBAysGl1Wnb4lkz+A/so9EEQooqTM8Sa+qUeiN9QuiVoKKrbzKa/qqD3Rulam6oGCdiUcgiCgtCIVYKb2VIcItSgooH+Kil/qpdUISsaol3BornnRa6rksdXKRlYBE2bFWTSfq4BxT8Ry/atDmWvDccxRj392pjLWf47Fg/bZejo5osPwo1G48mXWQ3A3GXsOZ+fJcwq8Yhx7aXguCwujkL66OWcseCAIzxNzTn+rsvp+PWIpMy8Oe/O+odVZE2jtDERaIsBYOp0A+n8FpMyvEQnnc7lHZ3y/ovQVzAKsPGt36nyHX+C0eKwdrgqqWV+s9MyVh9dwAqoZGnh8MxmppWx4lD+M2ihE9+cckBGu48ciN+xB5HzC2gxrDK2gkrMIkZJJPGQbixZfp9NFx/PGM1NPhf3TTPqmTvkH3hvi3Tr0fc319FoMtY9NgtSXm74ZPGz+I9V4cPlXpk1kfU8nxMd8cThdhx+ulNPR0jCGcR7GPf5czb+HzWzy1VcHGKR8bHEGTc+R0/quR5nznRy1eDOjfaMyPMhv8AqzyAt66/RdIwKrBNLUwv8G4dF9C963r0+TFJpbt15huAmvoVTTP4kTX+YTyeAr5Nn0ar0eiTeRCwOCoSlTKhLqeypdKpUBSuTFKfEiUQ6IqIoqiayBQBRRELAFE1moFaAoooVlRFEQitNufGhrBqaaaw9wqlhXo6eppp2NNNLHMdLhj72XmWHQXbrZTS+0r2pwVQwq0FdBdfRMDZUgqwKRcCrW+FUsKtCywsYU7VU1MCtFgKYcwkTMLUUub4U91XfRG4UQSe6nUJVB4lVUrAUUgKN1otBTA3VQN1aPCqDXTA681WmCCwFWAqm/mjfVBcChfVVgo3Ui26gKUFFAJzotTUvBeVm1clgtVPJ3HOKDy2fcczBQYRJX4RJQ0o0ivwC+QgaXL7jpbSxXl9h1XVY9tQpK7F2UvFpmSkSxMsZCGEXP8A416PMkbq/K+Iwx+KOTf+RH9Ctd9nbC/+1k9SXC0cEpsfixV4+e9rzWZ6d/IwY64otWHaMYe9kFU9vetCWD4kFanEY71mDT71myxmIn937ltMcLmYdJ0Mpt8r6rT4hI+TLtHWEWfSTgkfMlfVpD49ngM6YBQYjHM7hMMxBcw2seZI/wBeq47nDAqqmpjUQx3EGr91liWedutl3SsqOJUOZvN0Z3bLRYhQCpZv2Fx08wtz4KZI7Vgz3x9w+bqlsNbEYpmiRp1XttneYqzC54MNkeZqV5EbNSHs8h6rf4js6w2Wsc6KealFRrGGAEMPXT5jqsvKeyuspMy09ZW4jBJRU72TM4YIfIQbgEEWA+ZXyNZMV9Q+pN8eam5jt9EYJvjCqVkz9+VkYDza1zZZfsrBwgnswBWa/wAB+CT7coNexVgOmqS+qYKah7qXS3UutDEoX7uqCjlllGu1KSgEFoiiJQQRREoIGuo5KogiiiiA9UFFAeaJEKFBGyKcyZNWb3+/1WnvD+SI/aq+qcLeKVgKuYdFjhWsWi0PVoKpB0TMKkXg6K1h1VDCrWaFBcLi6YFVg3KdA2psnaquvqmugtB0T30VQKboge6a/KyquU45aLOIe7kWqt291TjVaLQVYzyVQKYH1QW/FG6rumHIaqg6gOiiiBroqu6N0FoPsokqsFEnRBjVfVaqpPccPRbGsk0WqkO9dSPM9rp6aorqSd9hUQWj/wAYOn7ysLYtj+A4bjeJTYjiLIGx/hRk85HvIswMGpJsdLdFsKKmpqnNcMNWxkkMjJGmN4uH6Xt+xeX2sVWE0tXDPg1LSHEMLqo6uSVjB+AwEXeLcwOvwt1XCl/jz7fTjHGbxNR7h1zHc24WXtM8OKQQvFoycOqLEc9DuKvDK/Csaw6amocRp5GyMtuA2INvI6r552QbWqHLOIYllzOc+JYdTwVL44KqhkMkLASdDGbkadWfMdV1DC8/5dq610mCVlPj7WWIYSwvA9Sw3HwI+QX3cd9+n53JjmPbOrIuHVOa3mwkLHMrI2E8llVFsQp+3QAiOUb7PgdR+xa0NO+RI3ultiu9tx3LjT8KJWNmxGBjDfcu4+l7fyXqqBnKy1mCUA4n5yQO+Ra69Xh1I1nNq+Plnd5l9HHGobfDwBAFkXVMYaxmie656dDpmKreTgqeIsupfRKCmWiKKXUQRRREIJ3VPaKCiKM5KoogICNkqiBkp9UboICEUqiBrJVEyDl99AmAVYOicInRmqxiqCsCCwJ2qtviTgoLmc0+t1SCrAdEFzCrb6BY4NlYDdDa5h80qjDojdA4Tgqq+iYPagYnVOzwqm9yrmeFBZ7IRYUoOiPI+JA/tJwFWFYDoijNRBSXsiCiVt7BS/kq7prqg1/PmilujdA11CUoN1HnRBgVpuFhEWYsusN3LDedLKR4/Mo3ZOKByP18wuVbRM0YjheHtqZaOO8Z4cby/fZUB9w9jxz1Hf5c7noF1vMrO471XGNrdM+fAoWkndjqgTY29h45/NbWkTbt0pmvjjUOGv7VUve+KYlu8SdyG4J/csepdNA4PifIyVjrh9tw39LLZ4zSU0cvCLzy9sk/tXna9jI592N9xbzXrn9rh/J99UmK4Xg+XqN+J19JSQCljDJKiZjAQGC2pXIdpW27L2GQTU2V5vvXETcCUAinjPnf2/lp6r5emnlmIM0j3kCwLjfRIC7o4rpfypmuocqePWJ3L7z2Hw4rBkrCfvueSor5ozUzySO1vK4yW+Qfb5Lp0LGgLymT2/2Clu2xEbPlovVsPk5eF6F4OniTE6qoFEHVBcEzUrE3sqRYCdE49EgVnRBAFFBfxJkUVRRGyAoWRupdAqiiiwRGyCN1olkEboIIoomAQCylkULoOWAqwbqpTsKpK3qnVTfEjfVSLQUw1VTU4QXBWMOipZu2VgKC0FMH6+JVN8Ksst0Lro3VTArALFYLLlM1VjVWIITr4ld7Crt7SbogZhViqBTgoLAUUiYarOQZqZK1NdOSjX0UuluotSZEFKPVEIGBSSmwRVMmoQYlQ65WJIbLMlY1Yc3VB53HRe65XtNhEmWKsEE2fGQB/jC63ikTnhzlzPafw6bLFdJI4MBYBr5l4sqr/Il87426SGZzzSvffyfcry9fLxqh0liPQr2mORhuDzzu3CRYAbnUkC68RPvOcXE3K9do3VEKW+qzMHo3V+LUdCzQ1E7Ih/mIH8ViWWxyxLJT5lwuaLxx1cTm/EPC4RK36HYHHwg1g5DQLfMLuS0+HM6711toyuIvB1VrfEqANVdGdVsqXMVgSMF9VYBqsDogqBOBZZyAUTIFLAKKKIIoomsgVREoIIoomAQKomsonE2llFEy1JCgnPhRRTkqdnqqx+VO1Uk7CnVYOu6mBQWAq0eipCtH5VIdl1aPCqQbJg7oguYdPErWG/wVCZhVDJYW7yPNUt5qze1CyVLGBWKphVvwWNMCo86aJWqHUITBgXJwUil0YtB804Omixwbqxh1RK4FG6RqN1ij3sFGpLo30QMjdJdFaCgQmHhSPOiJY9RyNlr5TqsypPcWvk11QY1W0PYVzPbBw6fKVa+RgkLyxsYI5v3xb91/kunzC8ZXJdvE3By5SFzrR/eDL6Xv+HIqr/IcBzJDKMClfNMeh4bG2F79eq8XIO/u9SvZ5zqo5cIkm3SHzzhjL9WAXJ+q8xhNDLWzSGM92GMyyOPIDl+8gfNev2hrr/Veo2S0razadlqBzA9hxOAuB5ECQFecrY7TndB3fZJHNex2ERVUm1TApKajkquz1AlkZHzYwaF/yvdcp6VD7xwqP8M3WxYsLCyDFpyWcBZedq0EKyNVMF1dGLIMiPorQqo+QVzFijph0SorQyVG6CywiiiiBrpVFFoiiNkbIFTXSqIHugo1DqgKZKoiUUUUQclD9UwOqoY/XRWsOioWga+qsHhVLDrqnvqguYm6qneTX/YguBBTDzVIOoumDrcipF11YxzbKgG4RBt7SDIBurAfNY4emD3BBlMd9E4f1WIDorAUUyN5R7yWKm9/aTtOmqJXB6N9VVfmmEjh5ILQWpwfJUB92+qcFBc3kjdVg6Ig6rdByW3UBSXRU8VLAWhOqb+0nBVaSdI8qAquQ6LBi1J7qwnrKqXdLrEe5ApOhXHPtDtYMOwuUNBk40lr/Af0XYHG7DZcR+0hV8N+C0Yd+I8yyH4dz+v0XSnsfPOZWYk94krWtbGw2jFxrdZmW49zJ2YKxzyG79NBbobvL/8A4LV47UOnrbH2NF6mvw/7v2M0c7xaTEMU43+QMewfuJ+a7z0h4ysfDLIXRskN/wA3Rdh+yZgTqvOddjrpAIcPpuFbqXyaD5WD/wBi4q6RxK+jfsgUr2YPj1bvjclqYorerGEn/wDcKck9Nh9NYX3Y/ktgNVraDSMLPidpqvMpksVrDqsYE7quYgy4zcK4FY7Cr2KZUtRCA9UQqSKVRRFIooiNFgKlkCp0stBUO8lUQHqiopdEogSgoihCKHVFyCKA2ISqIOOMKsD9FSEbolkMdyVrXXWMDorI3+8qGQ1MCqrog/VSLfmnBt8VVf2kblZyF4Leqa6oDyU4OirYuYUwPmqAeXeTArBkB6cPWOCnYbd08kGQCm37A2VG+LhODcH4Khd7KIVTHpw66C0FMHqtQHVBc0+8nB1VF0d5ZoZIc3qpdUh2oujvLBcmBVW8m3kDgqqQ6KF7lTI5BRUfBY9lbKbqp5sECS6ROIXzjt9r6c5zPa32ZRUkbWX8zvv/APmF9DyvsFwb7TeQqySClzuGzGgn/ss25raRl7H5i4/yeqrHP7x86VDnSTSSj2yTZe62n1jf0WynQQbwgbRcVoPW7WAfxXmcqYPNjOPwUTGP4N96U+UY5/y+a9BtnmZJjuHUscbI4qahEbGMFgBvvsPpZdr23OkvCWvqF9SfZKjYzZ/WvaQZH4pJv25j8OO38V8ucj1X0F9jnEXHEsfwZ5duPhjqmDoCDuH674+im/ofUdGfwwsyM6rAiO4wW8llRPd0XFTLYbqwdFjsKtY5BmwnQXWQwrDjOiujcgywWqwaqlh0Tg2CwPZBEG6hWqBRRM1YFRsjZRaFURugsEUR0KK0CyCZKgiiiiwGyllLqXWjiweDy5pg9t/EtC2WQxhwlk3T66q4F4AJmkv6Fc/kOMt1vge0mBb+ay0bJpA3e40jj6gJmVMtg/jPseQ3Ronyt4PQNddODyXnTV1TnANn3fzXYDdXQz1IBLpd438lnywcG9B95NdaiOse0ai/zVoxDUDhmx95OcM4y2oKZh5rV/eG6bCn/wDc/orG14DbuY5h90738k5wcZhsSfJOwrVNxSEGzmS/KyduKQuNmsk+YCvlBptCdEQ/VacY1Tb+6WTaD8o/msuKrjleAA8aX5qotBpnk8lZGXag+S18dW0y8LddfzWfTWc7cueRTlBo8btPina661ra1pp45GscQRexNk3bDuh/B5+//RT8kGm0L/eUB95agYswjWF1/wDErBisGvcl09GrYuabUF104K1UWKQStuwSgerR/NZLKhpbfvquSWddQFYbZwDYA6Ky5CbgZW8mD+qoBKO8VgvJCpmPklMhvZUyP7qBJCqnvbYKuSZ2pWLLUnlZZyUapksw2XtsVy7Fi+z+jweoh41NLBGZI5GAxvL7PIIPzsfOy53Vz2PLkF2bLIjxPJeHSTF0YbSsBLQHG4FnaHRwNuqyOx8tY3ljCcsxmgwrD2UjjIXTPDNX6AAEn4nS/VcQ214VuY/RVW7NuzU5b3WX8B//AKX1dt5w2Chr4IWFz5HTb75HBoJ7tt3ugC1gOi43mDK2IZ2a6mwyelp5MOpn1bjUEgObdgIBAOuo+iun80vm+ojdDK6M8wvqT7MmRPuGgOaZcQiqZsVo2cFkIO5HGbPsSebrgA+VjzXzlHhcmIY+3D4nsbLJNw995JF7819t5EwemwHL+H4NS/q6KmbFf8xb4j83bx+a6WIetZ+rCujfposYu0CeM2UDMjc5WscsWN3VXB6kZsTysmMrBhddoPmLrIjctqM2Mq4FY0RurYzqpspkMKiQFOCnIRRRHogCiiIQBRG9kpKCXTXVaIWbDKIgqFaAoiUEETIdFLpUf//Z" alt="Pradyumn Awasthi" />
-        </div>
-        <div class="photo-caption">★ ISSUE #001 · ORIGIN ★</div>
-      </div>
-      <div class="action-word" style="top:-30px; right:-20px; font-size:1.5rem; background:var(--spidey-blue); color:#fff;">POW!</div>
-      <div class="action-word" style="bottom:20px; left:-40px; font-size:1.2rem; background:var(--spidey-red);">THWIP!</div>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section id="about">
-  <div class="section-header">
-    <div class="section-tag">Chapter 01</div>
-    <h2 class="section-title" style="color:var(--white);">The <span style="color:var(--bat-gold)">Origin</span> <span style="color:var(--spidey-red)">Story</span></h2>
-  </div>
-  <div class="about-grid reveal">
-    <div class="about-card">
-      <span class="about-hero-tag">STATS</span>
-      <div class="about-stat">
-        <div class="about-stat-num">2+</div>
-        <div class="about-stat-label">Years MBA Journey</div>
-      </div>
-      <div class="about-stat">
-        <div class="about-stat-num">3+</div>
-        <div class="about-stat-label">Years BBA Training</div>
-      </div>
-      <div class="about-stat">
-        <div class="about-stat-num">1</div>
-        <div class="about-stat-label">Work Experience</div>
-      </div>
-      <div class="about-stat">
-        <div class="about-stat-num">∞</div>
-        <div class="about-stat-label">User Empathy</div>
-      </div>
-    </div>
-    <div class="about-text">
-      <h3>The <span>Hero</span> Behind The Mask</h3>
-      <p>Product-focused MBA student from Mahatma Jyotiba Phule Rohilkhand University, Bareilly. I live at the intersection of user psychology, data insights, and design thinking — building digital experiences that solve real problems.</p>
-      <div class="origin-panel">
-        <p>"With great user research comes great product responsibility. I bridge the gap between what users feel and what engineers build — translating pain points into features, hypotheses into roadmaps, and wireframes into reality."</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SKILLS -->
-<section id="skills">
-  <div class="section-header">
-    <div class="section-tag">Chapter 02</div>
-    <h2 class="section-title" style="color:var(--white);">Super<span style="color:var(--spidey-red)">powers</span></h2>
-  </div>
-  <div class="skills-container">
-    <div class="skills-grid">
-      <div class="skill-card reveal" style="--skill-color: var(--spidey-red)">
-        <span class="skill-icon">🕸️</span>
-        <h4>Product Strategy</h4>
-        <p>Requirement gathering, PRD writing, and market research — the web that holds everything together.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">PRD</span>
-          <span class="skill-tag">Requirements</span>
-          <span class="skill-tag">Market Research</span>
-        </div>
-      </div>
-      <div class="skill-card reveal" style="--skill-color: var(--spidey-blue)">
-        <span class="skill-icon">🦇</span>
-        <h4>UX / Design</h4>
-        <p>Wireframing, user journey mapping, prototyping — with Figma and precision of the Dark Knight.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">Figma</span>
-          <span class="skill-tag">Miro</span>
-          <span class="skill-tag">Wireframes</span>
-          <span class="skill-tag">User Journeys</span>
-        </div>
-      </div>
-      <div class="skill-card reveal" style="--skill-color: var(--bat-gold)">
-        <span class="skill-icon">⚡</span>
-        <h4>Agile Execution</h4>
-        <p>Sprint planning, acceptance criteria, QA testing — keeping the team moving like Deadpool in combat.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">Jira</span>
-          <span class="skill-tag">Trello</span>
-          <span class="skill-tag">Scrum</span>
-          <span class="skill-tag">QA</span>
-        </div>
-      </div>
-      <div class="skill-card reveal" style="--skill-color: #9B59B6">
-        <span class="skill-icon">🤖</span>
-        <h4>AI & Prompt Engineering</h4>
-        <p>Designing AI-powered products and crafting intelligent prompts for generative content systems.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">Prompt Eng.</span>
-          <span class="skill-tag">AI Content</span>
-          <span class="skill-tag">Generative AI</span>
-        </div>
-      </div>
-      <div class="skill-card reveal" style="--skill-color: #27AE60">
-        <span class="skill-icon">📊</span>
-        <h4>Data & Analytics</h4>
-        <p>KPI dashboards, pilot usage analysis, and data-driven insights to guide product decisions.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">SQL</span>
-          <span class="skill-tag">Excel</span>
-          <span class="skill-tag">KPI Tracking</span>
-        </div>
-      </div>
-      <div class="skill-card reveal" style="--skill-color: #E67E22">
-        <span class="skill-icon">🔍</span>
-        <h4>User Research</h4>
-        <p>User interviews, competitive benchmarking, and behavioral analysis — the detective work of product.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">Interviews</span>
-          <span class="skill-tag">Competitive Analysis</span>
-          <span class="skill-tag">Personas</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- EXPERIENCE -->
-<section id="experience">
-  <div class="section-header">
-    <div class="section-tag">Chapter 03</div>
-    <h2 class="section-title" style="color:var(--white);">Battle <span style="color:var(--bat-gold)">Log</span></h2>
-  </div>
-  <div class="timeline">
-    <div class="timeline-item reveal">
-      <div class="timeline-date">Feb 2026 — PRESENT</div>
-      <div class="timeline-company">ConveGenius.ai</div>
-      <div class="timeline-role">AI Design Associate · Noida</div>
-      <ul>
-        <li>Designed AI-powered interactive storybooks for K–5 learners using prompt engineering and narrative structuring</li>
-        <li>Conducted user research on learning behavior to identify engagement drivers and inform story themes</li>
-        <li>Built wireframes, layouts, and visual components in Figma aligned with UX and curriculum guidelines</li>
-        <li>Collaborated with product, curriculum, and engineering teams to define feature requirements</li>
-        <li>Contributed to PRDs including user journeys, feature breakdowns, and acceptance criteria</li>
-        <li>Supported QA by reviewing builds and identifying UI/UX inconsistencies</li>
-        <li>Analyzed pilot usage data to evaluate engagement patterns and suggest improvements</li>
-      </ul>
-    </div>
-    <div class="timeline-item reveal">
-      <div class="timeline-date">July 2025 — Jan 2026</div>
-      <div class="timeline-company">ConveGenius.ai</div>
-      <div class="timeline-role">AI Design Intern · Noida</div>
-      <ul>
-        <li>Conducted market and competitive research to support client product positioning and communication strategy</li>
-        <li>Built KPI dashboards in Excel to assist leadership with operational and strategic decision-making</li>
-        <li>Assisted in creating structured documentation and aligning workflows across cross-functional teams</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="section-header">
-    <div class="section-tag">Chapter 04</div>
-    <h2 class="section-title" style="color:var(--white);">Case <span style="color:var(--spidey-red)">Files</span></h2>
-  </div>
-  <div class="projects-grid">
-    <div class="project-card reveal">
-      <div class="project-card-header">
-        <span class="project-emoji">🏋️</span>
-        <div class="project-name">FitHub</div>
-      </div>
-      <div class="project-card-body">
-        <p>AI-Powered Fitness App Prototype. Conducted user interviews and competitor benchmarking to identify gaps. Built PRD for "Personalized Plans" feature with user flows, hypotheses, and measurable success metrics.</p>
-        <ul style="list-style:none; padding:0;">
-          <li style="color:var(--text-mid); font-size:0.95rem; padding: 0.2rem 0 0.2rem 1.2rem; position:relative;"><span style="position:absolute;left:0;color:var(--bat-gold);">▶</span> End-to-end PRD with acceptance criteria</li>
-          <li style="color:var(--text-mid); font-size:0.95rem; padding: 0.2rem 0 0.2rem 1.2rem; position:relative;"><span style="position:absolute;left:0;color:var(--bat-gold);">▶</span> Figma wireframes & interactive prototypes</li>
-          <li style="color:var(--text-mid); font-size:0.95rem; padding: 0.2rem 0 0.2rem 1.2rem; position:relative;"><span style="position:absolute;left:0;color:var(--bat-gold);">▶</span> Conversational AI chatbot concept</li>
-        </ul>
-        <div class="project-links">
-          <a href="https://fithub-1.lovable.app" target="_blank" class="project-link">🔗 Live App</a>
-        </div>
-      </div>
-    </div>
-    <div class="project-card reveal">
-      <div class="project-card-header" style="background: linear-gradient(135deg, #001a3a, #0a0a2a);">
-        <span class="project-emoji">📚</span>
-        <div class="project-name">AI Storybooks</div>
-      </div>
-      <div class="project-card-body">
-        <p>Interactive AI-powered storybooks for K–5 learners at ConveGenius.ai. Defined user journeys, built Figma components, and collaborated cross-functionally to ship features into the learning platform.</p>
-        <ul style="list-style:none; padding:0;">
-          <li style="color:#aaa; font-size:0.9rem; padding: 0.2rem 0 0.2rem 1.2rem; position:relative;"><span style="position:absolute;left:0;color:var(--bat-gold);">▶</span> Prompt-engineered narrative system</li>
-          <li style="color:#aaa; font-size:0.9rem; padding: 0.2rem 0 0.2rem 1.2rem; position:relative;"><span style="position:absolute;left:0;color:var(--bat-gold);">▶</span> Figma-based UX components</li>
-          <li style="color:#aaa; font-size:0.9rem; padding: 0.2rem 0 0.2rem 1.2rem; position:relative;"><span style="position:absolute;left:0;color:var(--bat-gold);">▶</span> Sprint PRDs & QA validation</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CERTIFICATIONS -->
-<section id="certs">
-  <div class="section-header">
-    <div class="section-tag">Chapter 05</div>
-    <h2 class="section-title" style="color:var(--white);">Hero <span style="color:var(--bat-gold)">Badges</span></h2>
-  </div>
-  <div class="certs-grid">
-    <div class="cert-card reveal">
-      <span class="cert-badge">🏆</span>
-      <div class="cert-name">Product Manager Certification</div>
-      <div class="cert-issuer">Udemy</div>
-    </div>
-    <div class="cert-card reveal">
-      <span class="cert-badge">🎓</span>
-      <div class="cert-name">Foundation in Data Science</div>
-      <div class="cert-issuer">IIT Madras</div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="contact-inner">
-    <div class="section-header">
-      <div class="section-tag">Chapter 06</div>
-      <h2 class="section-title" style="color:var(--white);">The <span style="color:var(--spidey-red)">Bat</span><span style="color:var(--bat-gold)">Signal</span></h2>
-    </div>
-    <p class="contact-subtitle">Available for PM Internships & Product Roles</p>
-    <p style="color:#888; font-size:1rem; line-height:1.8; margin-bottom:2rem;">
-      Whether you need a Spider-Man who swings in with user research, a Deadpool who relentlessly iterates,
-      or a Batman who plans every detail — I'm your person.
-    </p>
-    <div class="contact-links">
-      <a class="contact-link red">
-        📧 Pradyumnawasthi03@gmail.com
-      </a>
-      <a href="tel:+918791432596" class="contact-link">
-        📱 +91 87914 32596
-      </a>
-      <a href="https://www.linkedin.com/in/awasthi-p/" target="_blank" class="contact-link">
-        🔗 LinkedIn
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <p>© 2025 Pradyumn Awasthi · <span>With Great Products Comes Great Responsibility</span> · Noida, India</p>
-</footer>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  // ===== SPIDEY MASK CURSOR =====
-  const trailCanvas = document.getElementById('cursor-web');
-  const trailCtx = trailCanvas.getContext('2d');
-  const burstCanvas = document.getElementById('web-burst');
-  const burstCtx = burstCanvas.getContext('2d');
-  const mask = document.getElementById('cursor-mask');
-
-  function resizeCanvases() {
-    trailCanvas.width = burstCanvas.width = window.innerWidth;
-    trailCanvas.height = burstCanvas.height = window.innerHeight;
-  }
-  resizeCanvases();
-  window.addEventListener('resize', resizeCanvases);
-
-  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
-  let trails = [];
-  const MAX_TRAILS = 18;
-
-  window.addEventListener('mousemove', (e) => {
-    mx = e.clientX; my = e.clientY;
-    mask.style.left = mx + 'px';
-    mask.style.top = my + 'px';
-    trails.push({ x: mx, y: my, t: Date.now() });
-    if (trails.length > MAX_TRAILS) trails.shift();
-  });
-
-  // ===== TRAILING WEB =====
-  function drawTrail() {
-    trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
-    const now = Date.now();
-    for (let i = 1; i < trails.length; i++) {
-      const p1 = trails[i-1], p2 = trails[i];
-      const age = (now - p2.t) / 900;
-      if (age > 1) continue;
-      const alpha = (1 - age) * 0.65;
-      trailCtx.beginPath();
-      trailCtx.moveTo(p1.x, p1.y);
-      trailCtx.lineTo(p2.x, p2.y);
-      trailCtx.strokeStyle = `rgba(204,0,0,${alpha})`;
-      trailCtx.lineWidth = (1 - age) * 2.5;
-      trailCtx.stroke();
-      if (i % 3 === 0) {
-        const midX = (p1.x + p2.x) / 2, midY = (p1.y + p2.y) / 2;
-        const dx = p2.x - p1.x, dy = p2.y - p1.y;
-        const len = Math.sqrt(dx*dx + dy*dy) || 1;
-        const nx = -dy / len * 12, ny = dx / len * 12;
-        trailCtx.beginPath();
-        trailCtx.moveTo(midX - nx, midY - ny);
-        trailCtx.lineTo(midX + nx, midY + ny);
-        trailCtx.strokeStyle = `rgba(204,0,0,${alpha * 0.4})`;
-        trailCtx.lineWidth = (1 - age) * 1;
-        trailCtx.stroke();
-      }
-    }
-    trails = trails.filter(t => (now - t.t) < 900);
-    requestAnimationFrame(drawTrail);
-  }
-  requestAnimationFrame(drawTrail);
-
-  // ===== WEB BURST ON CLICK =====
-  let bursts = [];
-
-  document.addEventListener('click', (e) => {
-    bursts.push({ x: e.clientX, y: e.clientY, t: Date.now(), duration: 650 });
-    mask.classList.add('clicked');
-    setTimeout(() => mask.classList.remove('clicked'), 350);
-  });
-
-  function drawBursts() {
-    burstCtx.clearRect(0, 0, burstCanvas.width, burstCanvas.height);
-    const now = Date.now();
-    bursts = bursts.filter(b => (now - b.t) < b.duration);
-
-    for (const b of bursts) {
-      const age = (now - b.t) / b.duration;
-      const ease = 1 - Math.pow(1 - age, 3);
-      const maxR = 100;
-      const r = ease * maxR;
-      const alpha = 1 - age;
-      const numLines = 12;
-
-      for (let i = 0; i < numLines; i++) {
-        const angle = (i / numLines) * Math.PI * 2;
-        const innerR = r * 0.08;
-        burstCtx.beginPath();
-        burstCtx.moveTo(b.x + Math.cos(angle) * innerR, b.y + Math.sin(angle) * innerR);
-        burstCtx.lineTo(b.x + Math.cos(angle) * r, b.y + Math.sin(angle) * r);
-        burstCtx.strokeStyle = `rgba(204,0,0,${alpha * 0.9})`;
-        burstCtx.lineWidth = 1.8;
-        burstCtx.stroke();
-      }
-
-      const arcCount = 5;
-      for (let a = 1; a <= arcCount; a++) {
-        const arcR = r * (a / arcCount);
-        const arcAlpha = alpha * (1 - (a / arcCount) * 0.4);
-        burstCtx.beginPath();
-        burstCtx.arc(b.x, b.y, arcR, 0, Math.PI * 2);
-        burstCtx.strokeStyle = `rgba(204,0,0,${arcAlpha * 0.6})`;
-        burstCtx.lineWidth = 1;
-        burstCtx.stroke();
-      }
-
-      burstCtx.beginPath();
-      burstCtx.arc(b.x, b.y, 7 * (1 - age * 0.7), 0, Math.PI * 2);
-      burstCtx.fillStyle = `rgba(255,80,80,${alpha})`;
-      burstCtx.fill();
-    }
-    requestAnimationFrame(drawBursts);
-  }
-  requestAnimationFrame(drawBursts);
-
-
-  // ===== SPIDEY SWING SOUND ON CLICK =====
-  function playSwingSound() {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      // Whoosh/swing sound using oscillator + noise
-      const duration = 0.4;
-      const now = ctx.currentTime;
-
-      // Main whoosh oscillator (frequency sweep)
-      const osc = ctx.createOscillator();
-      const gainOsc = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(800, now);
-      osc.frequency.exponentialRampToValueAtTime(120, now + duration);
-      gainOsc.gain.setValueAtTime(0.18, now);
-      gainOsc.gain.exponentialRampToValueAtTime(0.001, now + duration);
-      osc.connect(gainOsc);
-      gainOsc.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + duration);
-
-      // Swish noise layer
-      const bufferSize = ctx.sampleRate * duration;
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.max(0, 1 - i / bufferSize);
-      }
-      const noise = ctx.createBufferSource();
-      noise.buffer = buffer;
-      const bandpass = ctx.createBiquadFilter();
-      bandpass.type = 'bandpass';
-      bandpass.frequency.setValueAtTime(1200, now);
-      bandpass.frequency.exponentialRampToValueAtTime(300, now + duration);
-      bandpass.Q.value = 0.8;
-      const gainNoise = ctx.createGain();
-      gainNoise.gain.setValueAtTime(0.22, now);
-      gainNoise.gain.exponentialRampToValueAtTime(0.001, now + duration);
-      noise.connect(bandpass);
-      bandpass.connect(gainNoise);
-      gainNoise.connect(ctx.destination);
-      noise.start(now);
-      noise.stop(now + duration);
-    } catch(e) {}
-  }
-
-  document.addEventListener('click', () => {
-    playSwingSound();
-  });
-
-  // ===== SCROLL REVEAL =====
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 100);
-      }
-    });
-  }, { threshold: 0.08 });
-  reveals.forEach(el => observer.observe(el));
-</script>
-
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
