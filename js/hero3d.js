@@ -389,6 +389,8 @@ export function initHero3D(container, { onPick, reduced } = {}) {
       );
       const s = u.scale * e * (1 + u.hover * 0.14);
       a.scale.setScalar(Math.max(0.0001, s));
+      // the ink hull keeps a fixed screen thickness, so hide actors until they have real size
+      a.visible = s > 0.02;
       a.rotation.x = u.baseRot.x + (reduced ? 0 : Math.sin(t * 0.6 + u.phase) * 0.06);
       a.rotation.y = u.baseRot.y + (reduced ? 0 : Math.sin(t * 0.45 + u.phase) * 0.18) + u.hover * 0.4 + state.scroll * 1.2;
       a.rotation.z = u.baseRot.z;
